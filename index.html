@@ -99,6 +99,12 @@
   .quick input{padding:5px 7px;border:1px solid var(--line-strong);border-radius:5px;font-size:12px;font-family:inherit}
   .quick input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
   .q-btns{display:flex;gap:5px}
+  .av-body{display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+  .av-body svg{flex:0 0 auto;overflow:visible}
+  .av-body:hover .slice{opacity:.6}.av-body .slice:hover{opacity:1}
+  .av-legend{min-width:320px;columns:2;column-gap:28px}
+  .av-legend li{break-inside:avoid}
+  @media (max-width:900px){.av-legend{columns:1}}
   .bars{display:grid;grid-template-columns:minmax(150px,230px) 1fr 40px;gap:9px 12px;align-items:center}
   .bars .bl{font-size:13px;color:var(--ink);text-align:right}
   .bars .bt{height:20px;background:#efeee9;border-radius:0 4px 4px 0;position:relative}
@@ -217,7 +223,7 @@
       <h2>Estadística de averías por sistema <small id="av-sub"></small></h2>
       <div class="toolbar"><div class="seg" id="avfil"><button class="on" data-v="ALL">Todo el período</button><button data-v="OPEN">Solo vigentes</button></div></div>
       <div id="averias"></div>
-      <div class="note-src">Clasificación automática según el texto de la falla. Un equipo puede sumar en más de un sistema (ej.: EX-11 por batería y por luces). Pasa el mouse por una barra para ver los equipos.</div>
+      <div class="note-src">Clasificación automática según el texto de la falla. Un equipo puede sumar en más de un sistema (ej.: EX-11 por batería y por luces). Pasa el mouse por una porción para ver los equipos.</div>
     </div>
     <div class="pies" id="pies"></div>
   </section>
@@ -320,7 +326,7 @@ function render(){
 /* ---------- Dashboard ---------- */
 function count(arr, key){ const m=new Map(); arr.forEach(r=>{const k=typeof key==="function"?key(r):r[key]; m.set(k,(m.get(k)||0)+1);}); return [...m.entries()].sort((a,b)=>b[1]-a[1]); }
 function foldOther(entries, max=6){ if(entries.length<=max) return entries; const head=entries.slice(0,max-1); const rest=entries.slice(max-1).reduce((s,e)=>s+e[1],0); return head.concat([["Otros",rest]]); }
-function pieSVG(entries, colors){
+function pieSVG(entries, colors, opts={}){
   // Torta 3D: elipse inclinada con espesor. Las cifras exactas van en la leyenda.
   const total = entries.reduce((s,e)=>s+e[1],0);
   const W=200, H=150, cx=100, cy=62, RX=92, RY=54, D=20;
@@ -328,7 +334,7 @@ function pieSVG(entries, colors){
   const shadow=`<ellipse cx="${cx}" cy="${cy+D+6}" rx="${RX}" ry="${RY*0.8}" fill="rgba(0,0,0,.10)"/>`;
   if(!total) return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${shadow}<ellipse cx="${cx}" cy="${cy+D}" rx="${RX}" ry="${RY}" fill="#dcdad4"/><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="#eeede9"/><text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="12" fill="#7d7b76">Sin datos</text></svg>`;
   const sl=[]; let a0=-Math.PI/2;
-  entries.forEach((e,i)=>{ const f=e[1]/total; const a1=a0+f*2*Math.PI; if(e[1]>0) sl.push({a0,a1,f,c:colors[i],tip:`${esc(e[0])}: ${e[1]} (${Math.round(f*100)}%)`}); a0=a1; });
+  entries.forEach((e,i)=>{ const f=e[1]/total; const a1=a0+f*2*Math.PI; if(e[1]>0) sl.push({a0,a1,f,c:colors[i],tip:`${esc(e[0])}: ${e[1]} (${Math.round(f*100)}%)`+(opts.tips&&opts.tips[i]?'<br>'+opts.tips[i]:'')}); a0=a1; });
   let sides="", tops="", walls="";
   sl.forEach(s=>{
     // pared exterior: solo la parte frontal (ángulos entre 0 y π)
@@ -346,7 +352,7 @@ function pieSVG(entries, colors){
   if(sl.length>1){ // bordes de corte visibles en el frente
     sl.forEach(s=>{ [s.a0].forEach(a=>{ if(Math.sin(a)>0.02) walls+=`<path class="edge" d="M${P(a)} L${P(a,D)}"/>`; }); });
   }
-  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">${shadow}<g>${sides}</g>${walls}<g>${tops}</g><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="url(#shine)" pointer-events="none"/></svg>`;
+  const sc=opts.scale||1; return `<svg viewBox="0 0 ${W} ${H}" width="${W*sc}" height="${H*sc}" role="img">${shadow}<g>${sides}</g>${walls}<g>${tops}</g><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="url(#shine)" pointer-events="none"/></svg>`;
 }
 function pieCard(title, desc, entries, colors){
   colors = colors || COLORS;
@@ -373,13 +379,15 @@ function renderAverias(recs){
   const base = avFil==="OPEN" ? recs.filter(r=>r.estado!=="OP") : recs;
   const m = SISTEMAS.map(([n])=>({n,eq:[]})); const otros={n:"Otros / sin clasificar",eq:[]};
   base.forEach(r=>{ const txt=(r.condicion||""); let hit=false; SISTEMAS.forEach(([n,re],i)=>{ if(re.test(txt)){ m[i].eq.push(r.equipo); hit=true; } }); if(!hit) otros.eq.push(r.equipo); });
-  const rows = m.concat([otros]).filter(x=>x.eq.length).sort((a,b)=>b.eq.length-a.eq.length || a.n.localeCompare(b.n));
+  const rows = m.filter(x=>x.eq.length).sort((a,b)=>b.eq.length-a.eq.length || a.n.localeCompare(b.n)).concat(otros.eq.length?[otros]:[]);
   const max = Math.max(1,...rows.map(x=>x.eq.length));
   const totalAv = rows.reduce((s,x)=>s+x.eq.length,0);
   document.getElementById("av-sub").textContent = `${totalAv} averías en ${base.length} reportes`;
-  document.getElementById("averias").innerHTML = rows.length ? `<div class="bars">${rows.map(x=>{
-    const tip=`${esc(x.n)}: ${x.eq.length} (${Math.round(x.eq.length/totalAv*100)}%)<br>${esc([...new Set(x.eq)].join(", "))}`;
-    return `<div class="bl">${esc(x.n)}</div><div class="bt" data-tip="${tip}"><div class="bf" style="width:${(x.eq.length/max*100).toFixed(1)}%"></div></div><div class="bv">${x.eq.length}</div>`;}).join("")}</div>` : '<div class="empty-state">Sin averías para este filtro.</div>';
+  const AVCOL=["var(--s1)","var(--s2)","var(--s3)","var(--s4)","var(--s5)","var(--s6)","var(--s7)","var(--s8)","#636363","#8c5a2b","#00a3bf","#7cb342","#1c5cab"].slice(0, rows.length-(otros.eq.length?1:0)).concat(otros.eq.length?["#b5b2aa"]:[]);
+  const entries = rows.map(x=>[x.n, x.eq.length]);
+  const tips = rows.map(x=>esc([...new Set(x.eq)].join(", ")));
+  const legend = rows.map((x,i)=>`<li data-tip="${esc(x.n)}: ${x.eq.length}<br>${tips[i]}"><span class="sw" style="background:${AVCOL[i]}"></span><span class="nm">${esc(x.n)}</span><span class="vl">${x.eq.length}</span><span class="pc">${Math.round(x.eq.length/totalAv*100)}%</span></li>`).join("");
+  document.getElementById("averias").innerHTML = rows.length ? `<div class="av-body">${pieSVG(entries, AVCOL, {scale:1.7, tips})}<ul class="legend av-legend">${legend}</ul></div>` : '<div class="empty-state">Sin averías para este filtro.</div>';
 }
 function renderDashboard(recs, abiertos, ops, now){
   renderAverias(recs);
