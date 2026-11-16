@@ -4,22 +4,22 @@
 // estado: "ABIERTO" (vigente) | "OP" (declarado operativo / reparado / listo)
 // Fechas ISO con hora de Chile (-03:00). Patente y N° Teck no vienen en los mensajes: completar cuando se conozcan.
 window.TALLER_DATA = {
-  actualizado: "2026-11-16T10:05:00-03:00",
+  actualizado: "2026-11-16T11:45:00-03:00",
   // Hora del último mensaje cubierto por la lectura del skill tallercda. La próxima lectura parte desde aquí.
   ultima_lectura: "2026-11-16T09:58:00-03:00",
-  periodo: "Historial disponible desde 13/11/2026 07:55 hasta 16/11/2026 10:05",
+  periodo: "Historial disponible desde 13/11/2026 07:55 hasta 16/11/2026 11:45",
   registros: [
     // ---------- FUERA DE SERVICIO / INGRESO A TALLER ----------
     { id: "W001", tipo: "FS", equipo: "REXA-01", patente: "", teck: "", clase: "Retroexcavadora",
-      reportado_por: "Tel. ••6082", fecha_reporte: "2026-11-13T09:47:00-03:00",
+      reportado_por: "Javier Moroso", fecha_reporte: "2026-11-13T09:47:00-03:00",
       condicion: "Equipo fuera de servicio, esperando asistencia (reiterado por varios integrantes)",
       estado: "ABIERTO", fecha_op: "", declarado_por: "", nota: "", fuente: "WhatsApp" },
     { id: "W002", tipo: "FS", equipo: "CA-21", patente: "", teck: "", clase: "Camión aljibe",
-      reportado_por: "Tel. ••3794", fecha_reporte: "2026-11-13T09:02:00-03:00",
+      reportado_por: "Andrea Ximena", fecha_reporte: "2026-11-13T09:02:00-03:00",
       condicion: "Problema de embrague (corta muy alto). Taller pide bajar equipo para chequeo",
       estado: "ABIERTO", fecha_op: "", declarado_por: "", nota: "", fuente: "WhatsApp" },
     { id: "W003", tipo: "FS", equipo: "CA-25", patente: "", teck: "", clase: "Camión aljibe",
-      reportado_por: "Tel. ••6082", fecha_reporte: "2026-11-13T13:04:00-03:00",
+      reportado_por: "Javier Moroso", fecha_reporte: "2026-11-13T13:04:00-03:00",
       condicion: "Baja a taller: regaderas no cortan",
       estado: "ABIERTO", fecha_op: "", declarado_por: "",
       nota: "14/11 15:53: reparación y reemplazo de componentes de regadío; pendiente prueba con agua", fuente: "WhatsApp" },
@@ -69,7 +69,7 @@ window.TALLER_DATA = {
       estado: "ABIERTO", fecha_op: "", declarado_por: "",
       nota: "15/11: instalada parada de emergencia y luces; vidrio frontal inferior en fabricación", fuente: "WhatsApp" },
     { id: "W013", tipo: "REV", equipo: "RD-04", patente: "", teck: "", clase: "Rodillo",
-      reportado_por: "Tel. ••6082", fecha_reporte: "2026-11-13T12:37:00-03:00",
+      reportado_por: "Javier Moroso", fecha_reporte: "2026-11-13T12:37:00-03:00",
       condicion: "Checklist: luces principales malas, pértiga, extintor descargado",
       estado: "OP", fecha_op: "2026-11-15T19:04:00-03:00", declarado_por: "Tel. ••4311",
       nota: "Chequeo y reparación de luces, baliza y pértiga", fuente: "WhatsApp" },
@@ -109,6 +109,14 @@ window.TALLER_DATA = {
       reportado_por: "Tel. ••4311", fecha_reporte: "2026-11-14T15:53:00-03:00",
       condicion: "En taller",
       estado: "OP", fecha_op: "2026-11-14T15:53:00-03:00", declarado_por: "Tel. ••4311",
-      nota: "Solo se informó 'operativo en taller'; ingreso no está en el historial", fuente: "WhatsApp" }
+      nota: "Solo se informó 'operativo en taller'; ingreso no está en el historial", fuente: "WhatsApp" },
+    { id: "W022", tipo: "REV", equipo: "CAA-04", patente: "", teck: "", clase: "Otro",
+      reportado_por: "Andrea Ximena", fecha_reporte: "2026-11-16T11:12:00-03:00",
+      condicion: "Alerta en tablero de batería baja de contacto (informa conductor)",
+      estado: "ABIERTO", fecha_op: "", declarado_por: "", nota: "Ubicado en PTOI", fuente: "WhatsApp" },
+    { id: "W023", tipo: "REV", equipo: "Rodillo doble tambor", patente: "", teck: "", clase: "Rodillo",
+      reportado_por: "Javier Moroso", fecha_reporte: "2026-11-16T10:56:00-03:00",
+      condicion: "Falta refrigerante",
+      estado: "ABIERTO", fecha_op: "", declarado_por: "", nota: "Sin código interno en el reporte. Ubicado en muro oriente central", fuente: "WhatsApp" }
   ]
 };
