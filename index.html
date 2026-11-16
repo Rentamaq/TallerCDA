@@ -117,6 +117,11 @@
   .est-sel.rev{color:#8a5d00;background-color:#fff4dc;border-color:#f3d796}
   .est-sel:focus{outline:2px solid var(--brand-2);outline-offset:1px}
   .est-sel option{color:#111;background:#fff}
+  th.sortable{cursor:pointer;user-select:none}
+  th.sortable:hover{color:var(--ink)}
+  th.sortable::after{content:attr(data-arrow);margin-left:5px;font-size:10px;color:var(--line-strong)}
+  th.sortable.on{color:var(--brand-2-dark)}
+  th.sortable.on::after{color:var(--brand-2)}
   .quick{display:flex;flex-direction:column;gap:5px;min-width:190px}
   .quick input{padding:5px 7px;border:1px solid var(--line-strong);border-radius:5px;font-size:12px;font-family:inherit}
   .quick input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
@@ -174,8 +179,8 @@
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th>Estado</th><th>Reportado por</th><th>Código interno</th>
-            <th>Hora de reporte</th><th>Horas F/S</th><th>Falla / motivo</th><th></th>
+            <th class="sortable" data-t="1" data-k="estado">Estado</th><th class="sortable" data-t="1" data-k="reportado_por">Reportado por</th><th class="sortable" data-t="1" data-k="equipo">Código interno</th>
+            <th class="sortable" data-t="1" data-k="fecha_reporte">Hora de reporte</th><th class="sortable" data-t="1" data-k="horas">Horas F/S</th><th class="sortable" data-t="1" data-k="condicion">Falla / motivo</th><th></th>
           </tr></thead>
           <tbody id="tb1"></tbody>
         </table>
@@ -211,8 +216,8 @@
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th>Código interno</th><th>Hora de reporte</th>
-            <th>Declarado operativo</th><th>Tiempo desde operativo</th><th>Tiempo detenido</th><th>Declarado por</th><th>Detalle</th>
+            <th class="sortable" data-t="2" data-k="equipo">Código interno</th><th class="sortable" data-t="2" data-k="fecha_reporte">Hora de reporte</th>
+            <th class="sortable" data-t="2" data-k="fecha_op">Declarado operativo</th><th class="sortable" data-t="2" data-k="desde">Tiempo desde operativo</th><th class="sortable" data-t="2" data-k="detenido">Tiempo detenido</th><th class="sortable" data-t="2" data-k="declarado_por">Declarado por</th><th class="sortable" data-t="2" data-k="condicion">Detalle</th>
           </tr></thead>
           <tbody id="tb2"></tbody>
         </table>
@@ -279,6 +284,29 @@ const fromLocalInput = v => { const d=new Date(v); const off=-d.getTimezoneOffse
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block"; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display="none",2600); }
 
 let f1tipo="ALL";
+const SORT={1:{k:null,d:1},2:{k:null,d:1}};
+function sortVal(r,k,now){
+  switch(k){
+    case "estado": return r.tipo==="FS"?0:1;
+    case "horas": return hoursBetween(r.fecha_reporte, now);
+    case "fecha_reporte": return new Date(r.fecha_reporte).getTime()||0;
+    case "fecha_op": return new Date(r.fecha_op).getTime()||0;
+    case "desde": return hoursBetween(r.fecha_op, now);
+    case "detenido": return hoursBetween(r.fecha_reporte, r.fecha_op);
+    default: return String(r[k]||"").toLowerCase();
+  }
+}
+function applySort(rows,t,now){
+  const st=SORT[t]; if(!st.k) return rows;
+  return [...rows].sort((a,b)=>{ const x=sortVal(a,st.k,now), y=sortVal(b,st.k,now);
+    const c = (typeof x==="number"&&typeof y==="number") ? x-y : String(x).localeCompare(String(y),"es",{numeric:true,sensitivity:"base"});
+    return c*st.d; });
+}
+function paintSortHeads(){
+  document.querySelectorAll("th.sortable").forEach(th=>{ const st=SORT[th.dataset.t]; const on=st.k===th.dataset.k;
+    th.classList.toggle("on",on); th.dataset.arrow = on ? (st.d===1?"▲":"▼") : "↕";
+    th.setAttribute("aria-sort", on ? (st.d===1?"ascending":"descending") : "none"); });
+}
 function badge(r){
   if(r.estado==="OP") return '<span class="badge op">● Operativo</span>';
   return r.tipo==="FS" ? '<span class="badge fs">● Fuera de servicio</span>' : '<span class="badge rev">▲ Solicita revisión</span>';
@@ -301,7 +329,7 @@ function render(){
 
   // Tab 1
   const q1 = document.getElementById("f1q").value.trim();
-  const rows1 = abiertos.filter(r=>(f1tipo==="ALL"||r.tipo===f1tipo) && matches(r,q1));
+  const rows1 = applySort(abiertos.filter(r=>(f1tipo==="ALL"||r.tipo===f1tipo) && matches(r,q1)),1,now);
   document.getElementById("tb1").innerHTML = rows1.length ? rows1.map(r=>{
     const h = hoursBetween(r.fecha_reporte, now);
     const cls = h>=72?"h3":h>=24?"h2":"h1";
@@ -320,7 +348,8 @@ function render(){
 
   // Tab 2
   const q2 = document.getElementById("f2q").value.trim();
-  const rows2 = ops.filter(r=>matches(r,q2));
+  const rows2 = applySort(ops.filter(r=>matches(r,q2)),2,now);
+  paintSortHeads();
   document.getElementById("tb2").innerHTML = rows2.length ? rows2.map(r=>{
     const desde = hoursBetween(r.fecha_op, now);
     const det = hoursBetween(r.fecha_reporte, r.fecha_op);
@@ -467,6 +496,10 @@ document.addEventListener("change",e=>{
   if(n) Object.assign(n,cambio); else LOCAL.ediciones[id]=Object.assign(LOCAL.ediciones[id]||{},cambio);
   saveLocal(); render(); toast(r.equipo+" ahora: "+(v==="FS"?"Fuera de servicio":"Solicita revisión"));
 });
+document.querySelectorAll("th.sortable").forEach(th=>th.addEventListener("click",()=>{
+  const st=SORT[th.dataset.t]; if(st.k===th.dataset.k) st.d=-st.d; else { st.k=th.dataset.k; st.d = ["horas","desde","detenido"].includes(st.k)?-1:1; }
+  render();
+}));
 document.getElementById("f1q").oninput=render; document.getElementById("f2q").oninput=render;
 
 document.addEventListener("click",e=>{
