@@ -434,8 +434,7 @@ function renderDashboard(recs, abiertos, ops, now){
       fsAb.length?`<b>${mas72} de ${fsAb.length}</b> equipos llevan más de 3 días detenidos.`:"") +
     pieCard("Tipo de reporte recibido","Reportes del período: equipo detenido o equipo que opera pero pide revisión.", tipos, ["var(--fs)","var(--rev)"], "Reportes",
       (nFS+nRev)?`<b>${nFS}</b> reportes de equipo detenido y <b>${nRev}</b> solicitudes de revisión.`:"") +
-    pieCard("Quién reporta las fallas","Integrantes del grupo que informan fallas o piden revisión (sin nombre guardado se muestra el teléfono).", foldOther(count(recs,"reportado_por")), null, "Reportes") +
-    pieCard("Quién declara los equipos operativos","Integrantes que informan que un equipo quedó reparado o listo.", foldOther(count(ops,"declarado_por")), null, "Equipos");
+    pieCard("Quién reporta las fallas","Integrantes del grupo que informan fallas o piden revisión (sin nombre guardado se muestra el teléfono).", foldOther(count(recs,"reportado_por")), null, "Reportes");
 }
 
 /* ---------- Interacción ---------- */
