@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Taller Rentamaq CDA · Estado de equipos</title>
+<style>
+  :root{
+    --bg:#f4f3f0; --surface:#fcfcfb; --line:#e3e1dc; --line-strong:#cfccc5;
+    --ink:#0b0b0b; --ink-2:#52514e; --ink-3:#7d7b76;
+    --brand:#1d2b3a; --brand-2:#f2a900;
+    --fs:#e34948; --rev:#eda100; --op:#008300;
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948;
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+  header{background:var(--brand);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  header .logo{width:38px;height:38px;border-radius:8px;background:var(--brand-2);display:grid;place-items:center;font-weight:800;color:var(--brand);font-size:15px}
+  header h1{font-size:18px;margin:0;font-weight:650}
+  header .sub{font-size:12px;opacity:.75;margin-top:2px}
+  header .grow{flex:1}
+  header button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:13px}
+  header button:hover{background:rgba(255,255,255,.1)}
+  nav{display:flex;gap:4px;padding:0 22px;background:var(--brand);border-top:1px solid rgba(255,255,255,.08)}
+  nav button{background:none;border:0;color:rgba(255,255,255,.7);padding:12px 16px;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;font-weight:550}
+  nav button.active{color:#fff;border-bottom-color:var(--brand-2)}
+  nav .count{display:inline-block;min-width:20px;padding:1px 6px;margin-left:6px;border-radius:10px;background:rgba(255,255,255,.15);font-size:12px}
+  main{padding:20px 22px 40px;max-width:1500px;margin:0 auto}
+  .tab{display:none}.tab.active{display:block}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px}
+  .card h2{font-size:15px;margin:0 0 12px;font-weight:650}
+  .card h2 small{font-weight:400;color:var(--ink-3);font-size:12px;margin-left:6px}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .toolbar input[type=search],.toolbar select{padding:7px 10px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;background:#fff}
+  .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:7px;overflow:hidden}
+  .seg button{border:0;background:#fff;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--ink-2)}
+  .seg button+button{border-left:1px solid var(--line-strong)}
+  .seg button.on{background:var(--brand);color:#fff}
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-weight:600;color:var(--ink-2);font-size:12px;text-transform:uppercase;letter-spacing:.02em;padding:9px 10px;border-bottom:1px solid var(--line-strong);white-space:nowrap;background:#f8f7f4;position:sticky;top:0}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:hover td{background:#faf9f6}
+  .code{font-weight:700;white-space:nowrap}
+  .muted{color:var(--ink-3)}
+  .small{font-size:12px}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;border:1px solid}
+  .badge.fs{color:#b3201f;background:#fdeceb;border-color:#f6c3c2}
+  .badge.rev{color:#8a5d00;background:#fff4dc;border-color:#f3d796}
+  .badge.op{color:#065f06;background:#e6f4e6;border-color:#b7dcb7}
+  .badge.man{color:#2a5aa0;background:#e9f1fc;border-color:#c3d8f5}
+  .hrs{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hrs.h1{color:#8a5d00}.hrs.h2{color:#c2410c}.hrs.h3{color:#b3201f}
+  .edit{cursor:pointer;border-bottom:1px dashed var(--line-strong);min-width:60px;display:inline-block}
+  .edit.empty{color:var(--ink-3)}
+  .edit input{width:110px;padding:3px 5px;font-size:13px;border:1px solid var(--s1);border-radius:4px}
+  .btn{background:var(--brand);color:#fff;border:0;padding:8px 14px;border-radius:7px;font-size:13px;cursor:pointer;font-weight:550}
+  .btn.ok{background:var(--op)}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line-strong)}
+  .btn.sm{padding:4px 9px;font-size:12px}
+  .btn:hover{filter:brightness(1.08)}
+  form.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px 14px;align-items:end}
+  form.grid label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink-2);font-weight:550}
+  form.grid input,form.grid select,form.grid textarea{padding:8px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;font-family:inherit;background:#fff}
+  form.grid .wide{grid-column:1/-1}
+  form.grid textarea{min-height:56px;resize:vertical}
+  .hint{font-size:12px;color:var(--ink-3);margin-top:8px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+  .kpi .lab{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+  .kpi .val{font-size:30px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+  .kpi .foot{font-size:12px;color:var(--ink-3);margin-top:2px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .pies{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+  .pie-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+  .pie-card h3{margin:0 0 2px;font-size:14px;font-weight:650}
+  .pie-card .desc{font-size:12px;color:var(--ink-3);margin-bottom:10px}
+  .pie-body{display:flex;gap:16px;align-items:center}
+  .pie-body svg{flex:0 0 170px}
+  .legend{list-style:none;margin:0;padding:0;flex:1;font-size:13px}
+  .legend li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
+  .legend li:last-child{border-bottom:0}
+  .legend .sw{width:11px;height:11px;border-radius:3px;flex:0 0 11px}
+  .legend .nm{flex:1;color:var(--ink)}
+  .legend .vl{font-variant-numeric:tabular-nums;font-weight:600}
+  .legend .pc{font-variant-numeric:tabular-nums;color:var(--ink-3);width:42px;text-align:right}
+  .slice{stroke:var(--surface);stroke-width:2;cursor:default;transition:opacity .15s}
+  .pie-body svg:hover .slice{opacity:.55}.pie-body svg .slice:hover{opacity:1}
+  #tip{position:fixed;pointer-events:none;background:#1d1d1b;color:#fff;font-size:12px;padding:6px 9px;border-radius:6px;display:none;z-index:50;max-width:260px}
+  .empty-state{padding:24px;text-align:center;color:var(--ink-3)}
+  .toast{position:fixed;bottom:20px;right:20px;background:#1d1d1b;color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;display:none;z-index:60}
+  .note-src{font-size:12px;color:var(--ink-3);margin-top:6px}
+  @media (max-width:700px){ .pie-body{flex-direction:column} main{padding:14px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">RM</div>
+  <div>
+    <h1>Taller Rentamaq CDA · Estado de equipos</h1>
+    <div class="sub" id="sub">—</div>
+  </div>
+  <div class="grow"></div>
+  <button onclick="location.reload(true)" title="Recargar datos">⟳ Actualizar</button>
+  <button onclick="exportCSV()">Exportar CSV</button>
+  <button onclick="exportDataJS()" title="Descarga data.js con los ingresos manuales incluidos, para subirlo al repositorio">Descargar data.js</button>
+</header>
+<nav>
+  <button class="active" data-tab="t1">Fuera de servicio y revisiones <span class="count" id="c1">0</span></button>
+  <button data-tab="t2">Operativos <span class="count" id="c2">0</span></button>
+  <button data-tab="t3">Dashboard</button>
+</nav>
+
+<main>
+  <!-- ================= PESTAÑA 1 ================= -->
+  <section class="tab active" id="t1">
+    <div class="card">
+      <h2>Equipos fuera de servicio y solicitudes de revisión <small>vigentes · horas calculadas en tiempo real</small></h2>
+      <div class="toolbar">
+        <div class="seg" id="f1tipo">
+          <button class="on" data-v="ALL">Todos</button>
+          <button data-v="FS">Fuera de servicio</button>
+          <button data-v="REV">Solicitan revisión</button>
+        </div>
+        <input type="search" id="f1q" placeholder="Buscar equipo, patente, falla…">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Estado</th><th>Reportado por</th><th>Patente</th><th>Código interno</th><th>N° Teck</th>
+            <th>Hora de reporte</th><th>Horas F/S</th><th>Falla / motivo</th><th></th>
+          </tr></thead>
+          <tbody id="tb1"></tbody>
+        </table>
+      </div>
+      <div class="note-src">Patente y N° Teck no vienen en los mensajes del grupo: haz clic en la celda para completarlos.</div>
+    </div>
+
+    <div class="card">
+      <h2>Ingresar equipo fuera de servicio / solicitud de revisión</h2>
+      <form class="grid" id="form1" autocomplete="off">
+        <label>Tipo
+          <select name="tipo"><option value="FS">Fuera de servicio</option><option value="REV">Solicita revisión</option></select>
+        </label>
+        <label>Código interno *<input name="equipo" required placeholder="EX-11"></label>
+        <label>Patente<input name="patente" placeholder="ABCD-12"></label>
+        <label>N° Teck<input name="teck" placeholder="N° Teck"></label>
+        <label>Clase de equipo
+          <select name="clase"></select>
+        </label>
+        <label>Reportado por *<input name="reportado_por" required placeholder="Nombre"></label>
+        <label>Fecha y hora de reporte *<input name="fecha_reporte" type="datetime-local" required></label>
+        <label class="wide">Falla / motivo *<textarea name="condicion" required placeholder="Describe la falla o el motivo del ingreso"></textarea></label>
+        <div><button class="btn" type="submit">Registrar equipo</button></div>
+      </form>
+      <div class="hint">Los ingresos manuales quedan guardados en este navegador. Para compartirlos con todos, usa «Descargar data.js» y súbelo al repositorio.</div>
+    </div>
+  </section>
+
+  <!-- ================= PESTAÑA 2 ================= -->
+  <section class="tab" id="t2">
+    <div class="card">
+      <h2>Equipos declarados operativos, reparados o listos</h2>
+      <div class="toolbar">
+        <input type="search" id="f2q" placeholder="Buscar equipo, patente…">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th>Patente</th><th>Código interno</th><th>N° Teck</th><th>Hora de reporte</th>
+            <th>Declarado operativo</th><th>Tiempo desde operativo</th><th>Tiempo detenido</th><th>Declarado por</th><th>Detalle</th>
+          </tr></thead>
+          <tbody id="tb2"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Ingresar equipo operativo</h2>
+      <form class="grid" id="form2" autocomplete="off">
+        <label>Código interno *<input name="equipo" required list="dl-abiertos" placeholder="Elige o escribe"></label>
+        <datalist id="dl-abiertos"></datalist>
+        <label>Patente<input name="patente"></label>
+        <label>N° Teck<input name="teck"></label>
+        <label>Declarado por *<input name="declarado_por" required placeholder="Nombre"></label>
+        <label>Fecha y hora operativo *<input name="fecha_op" type="datetime-local" required></label>
+        <label class="wide">Detalle / trabajo realizado<textarea name="nota" placeholder="Ej.: reemplazo de alternador, equipo a ruta"></textarea></label>
+        <div><button class="btn ok" type="submit">Declarar operativo</button></div>
+      </form>
+      <div class="hint">Si el código coincide con un equipo vigente en la primera pestaña, ese registro se cierra y pasa aquí. Si no, se crea un registro nuevo de operativo.</div>
+    </div>
+  </section>
+
+  <!-- ================= PESTAÑA 3 ================= -->
+  <section class="tab" id="t3">
+    <div class="kpis" id="kpis"></div>
+    <div class="pies" id="pies"></div>
+  </section>
+</main>
+<div id="tip"></div>
+<div class="toast" id="toast"></div>
+
+<script src="data.js"></script>
+<script>
+const LS_KEY = "tallercda_local_v1";
+const CLASES = ["Excavadora","Mini excavadora","Retroexcavadora","Cargador frontal","Camión aljibe","Camión pluma","Camión","Rodillo","Otro"];
+const COLORS = ["var(--s1)","var(--s2)","var(--s3)","var(--s4)","var(--s5)","var(--s6)","var(--s7)","var(--s8)"];
+
+function loadLocal(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)) || {nuevos:[],cierres:{},ediciones:{}}; }catch(e){ return {nuevos:[],cierres:{},ediciones:{}}; } }
+function saveLocal(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(LOCAL)); }catch(e){} }
+let LOCAL = loadLocal();
+LOCAL.nuevos = LOCAL.nuevos||[]; LOCAL.cierres = LOCAL.cierres||{}; LOCAL.ediciones = LOCAL.ediciones||{};
+
+function allRecords(){
+  const base = (window.TALLER_DATA && TALLER_DATA.registros || []).map(r=>({...r}));
+  const recs = base.concat(LOCAL.nuevos.map(r=>({...r})));
+  recs.forEach(r=>{
+    const e = LOCAL.ediciones[r.id]; if(e) Object.assign(r, e);
+    const c = LOCAL.cierres[r.id]; if(c && r.estado!=="OP") Object.assign(r, c, {estado:"OP"});
+  });
+  return recs;
+}
+
+const fmt = iso => { if(!iso) return "—"; const d=new Date(iso); return d.toLocaleDateString("es-CL",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"}); };
+const hoursBetween = (a,b) => Math.max(0,(new Date(b)-new Date(a))/36e5);
+function dur(h){ if(h<1) return Math.round(h*60)+" min"; if(h<48) return h.toFixed(1).replace(".",",")+" h"; const t=Math.round(h); const d=Math.floor(t/24); return d+" d "+(t-d*24)+" h"; }
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toLocalInput = d => { const p=n=>String(n).padStart(2,"0"); return d.getFullYear()+"-"+p(d.getMonth()+1)+"-"+p(d.getDate())+"T"+p(d.getHours())+":"+p(d.getMinutes()); };
+const fromLocalInput = v => { const d=new Date(v); const off=-d.getTimezoneOffset(); const s=off>=0?"+":"-"; const p=n=>String(Math.floor(Math.abs(n))).padStart(2,"0"); return v+":00"+s+p(off/60)+":"+p(off%60); };
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.style.display="block"; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display="none",2600); }
+
+let f1tipo="ALL";
+function badge(r){
+  if(r.estado==="OP") return '<span class="badge op">● Operativo</span>';
+  return r.tipo==="FS" ? '<span class="badge fs">● Fuera de servicio</span>' : '<span class="badge rev">▲ Solicita revisión</span>';
+}
+function editCell(r, field){
+  const v = r[field];
+  return `<span class="edit ${v?"":"empty"}" data-id="${esc(r.id)}" data-f="${field}" title="Clic para editar">${v?esc(v):"+ agregar"}</span>`;
+}
+function matches(r,q){ if(!q) return true; q=q.toLowerCase(); return [r.equipo,r.patente,r.teck,r.condicion,r.reportado_por,r.nota,r.clase,r.declarado_por].join(" ").toLowerCase().includes(q); }
+
+function render(){
+  const now = new Date();
+  const recs = allRecords();
+  const abiertos = recs.filter(r=>r.estado!=="OP").sort((a,b)=>new Date(a.fecha_reporte)-new Date(b.fecha_reporte));
+  const ops = recs.filter(r=>r.estado==="OP").sort((a,b)=>new Date(b.fecha_op)-new Date(a.fecha_op));
+  document.getElementById("c1").textContent = abiertos.length;
+  document.getElementById("c2").textContent = ops.length;
+  const d = window.TALLER_DATA||{};
+  document.getElementById("sub").textContent = "Grupo WhatsApp «Taller Rentamaq CDA» · Actualizado "+fmt(d.actualizado)+" · "+(d.periodo||"");
+
+  // Tab 1
+  const q1 = document.getElementById("f1q").value.trim();
+  const rows1 = abiertos.filter(r=>(f1tipo==="ALL"||r.tipo===f1tipo) && matches(r,q1));
+  document.getElementById("tb1").innerHTML = rows1.length ? rows1.map(r=>{
+    const h = hoursBetween(r.fecha_reporte, now);
+    const cls = h>=72?"h3":h>=24?"h2":"h1";
+    return `<tr>
+      <td>${badge(r)}${r.fuente==="Manual"?' <span class="badge man">Manual</span>':''}</td>
+      <td>${esc(r.reportado_por)}</td>
+      <td>${editCell(r,"patente")}</td>
+      <td class="code">${esc(r.equipo)}<div class="muted small">${esc(r.clase||"")}</div></td>
+      <td>${editCell(r,"teck")}</td>
+      <td style="white-space:nowrap">${fmt(r.fecha_reporte)}</td>
+      <td><span class="hrs ${cls}">${dur(h)}</span></td>
+      <td>${esc(r.condicion)}${r.nota?`<div class="muted small">${esc(r.nota)}</div>`:""}</td>
+      <td><button class="btn ok sm" data-close="${esc(r.id)}">Declarar operativo</button></td>
+    </tr>`;}).join("") : `<tr><td colspan="9" class="empty-state">Sin equipos para este filtro.</td></tr>`;
+
+  // Tab 2
+  const q2 = document.getElementById("f2q").value.trim();
+  const rows2 = ops.filter(r=>matches(r,q2));
+  document.getElementById("tb2").innerHTML = rows2.length ? rows2.map(r=>{
+    const desde = hoursBetween(r.fecha_op, now);
+    const det = hoursBetween(r.fecha_reporte, r.fecha_op);
+    return `<tr>
+      <td>${editCell(r,"patente")}</td>
+      <td class="code">${esc(r.equipo)}<div class="muted small">${esc(r.clase||"")}</div></td>
+      <td>${editCell(r,"teck")}</td>
+      <td style="white-space:nowrap">${fmt(r.fecha_reporte)}<div class="muted small">${r.tipo==="FS"?"F/S":"Revisión"} · ${esc(r.reportado_por)}</div></td>
+      <td style="white-space:nowrap">${fmt(r.fecha_op)}</td>
+      <td><span class="hrs" style="color:var(--op)">${dur(desde)}</span></td>
+      <td class="muted">${det>0.01?dur(det):"—"}</td>
+      <td>${esc(r.declarado_por)}</td>
+      <td>${esc(r.condicion)}${r.nota?`<div class="muted small">${esc(r.nota)}</div>`:""}</td>
+    </tr>`;}).join("") : `<tr><td colspan="9" class="empty-state">Aún no hay equipos declarados operativos.</td></tr>`;
+
+  document.getElementById("dl-abiertos").innerHTML = abiertos.map(r=>`<option value="${esc(r.equipo)}">${r.tipo==="FS"?"F/S":"Revisión"} · ${esc(r.condicion).slice(0,50)}</option>`).join("");
+
+  renderDashboard(recs, abiertos, ops, now);
+}
+
+/* ---------- Dashboard ---------- */
+function count(arr, key){ const m=new Map(); arr.forEach(r=>{const k=typeof key==="function"?key(r):r[key]; m.set(k,(m.get(k)||0)+1);}); return [...m.entries()].sort((a,b)=>b[1]-a[1]); }
+function foldOther(entries, max=6){ if(entries.length<=max) return entries; const head=entries.slice(0,max-1); const rest=entries.slice(max-1).reduce((s,e)=>s+e[1],0); return head.concat([["Otros",rest]]); }
+function pieSVG(entries, colors){
+  const total = entries.reduce((s,e)=>s+e[1],0); const R=80, cx=85, cy=85;
+  if(!total) return `<svg viewBox="0 0 170 170" width="170" height="170"><circle cx="${cx}" cy="${cy}" r="${R}" fill="#eeede9"/><text x="85" y="90" text-anchor="middle" font-size="12" fill="#7d7b76">Sin datos</text></svg>`;
+  let a0=-Math.PI/2, out="";
+  entries.forEach((e,i)=>{
+    const frac=e[1]/total, a1=a0+frac*2*Math.PI;
+    const tipTxt = `${esc(e[0])}: ${e[1]} (${Math.round(frac*100)}%)`;
+    if(frac>=0.9999){ out+=`<circle class="slice" cx="${cx}" cy="${cy}" r="${R}" fill="${colors[i]}" data-tip="${tipTxt}"/>`; }
+    else{
+      const x0=cx+R*Math.cos(a0), y0=cy+R*Math.sin(a0), x1=cx+R*Math.cos(a1), y1=cy+R*Math.sin(a1);
+      out+=`<path class="slice" d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${R},${R} 0 ${a1-a0>Math.PI?1:0} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="${colors[i]}" data-tip="${tipTxt}"/>`;
+    }
+    a0=a1;
+  });
+  return `<svg viewBox="0 0 170 170" width="170" height="170" role="img">${out}</svg>`;
+}
+function pieCard(title, desc, entries, colors){
+  colors = colors || COLORS;
+  const total = entries.reduce((s,e)=>s+e[1],0);
+  const legend = entries.map((e,i)=>`<li><span class="sw" style="background:${colors[i]}"></span><span class="nm">${esc(e[0])}</span><span class="vl">${e[1]}</span><span class="pc">${total?Math.round(e[1]/total*100):0}%</span></li>`).join("");
+  return `<div class="pie-card"><h3>${esc(title)}</h3><div class="desc">${esc(desc)}</div><div class="pie-body">${pieSVG(entries,colors)}<ul class="legend">${legend}</ul></div></div>`;
+}
+function renderDashboard(recs, abiertos, ops, now){
+  const fsAb = abiertos.filter(r=>r.tipo==="FS"), revAb = abiertos.filter(r=>r.tipo==="REV");
+  const hrsFS = fsAb.map(r=>hoursBetween(r.fecha_reporte, now));
+  const prom = hrsFS.length? hrsFS.reduce((a,b)=>a+b,0)/hrsFS.length : 0;
+  const cerradosFS = ops.filter(r=>r.tipo==="FS" && hoursBetween(r.fecha_reporte,r.fecha_op)>0.01);
+  const mttr = cerradosFS.length ? cerradosFS.reduce((s,r)=>s+hoursBetween(r.fecha_reporte,r.fecha_op),0)/cerradosFS.length : 0;
+  const masAntiguo = fsAb.length ? fsAb.reduce((a,b)=>new Date(a.fecha_reporte)<new Date(b.fecha_reporte)?a:b) : null;
+  document.getElementById("kpis").innerHTML = `
+    <div class="kpi"><div class="lab"><span class="dot" style="background:var(--fs)"></span>Fuera de servicio</div><div class="val">${fsAb.length}</div><div class="foot">vigentes</div></div>
+    <div class="kpi"><div class="lab"><span class="dot" style="background:var(--rev)"></span>Solicitan revisión</div><div class="val">${revAb.length}</div><div class="foot">pendientes</div></div>
+    <div class="kpi"><div class="lab"><span class="dot" style="background:var(--op)"></span>Declarados operativos</div><div class="val">${ops.length}</div><div class="foot">en el período</div></div>
+    <div class="kpi"><div class="lab">Promedio F/S vigente</div><div class="val">${dur(prom)}</div><div class="foot">${masAntiguo?"más antiguo: "+esc(masAntiguo.equipo)+" ("+dur(hoursBetween(masAntiguo.fecha_reporte,now))+")":"—"}</div></div>
+    <div class="kpi"><div class="lab">Tiempo medio de reparación</div><div class="val">${cerradosFS.length?dur(mttr):"—"}</div><div class="foot">${cerradosFS.length} F/S cerrados con hora de ingreso</div></div>`;
+
+  const estado = [["Fuera de servicio",fsAb.length],["Solicita revisión",revAb.length],["Operativo",ops.length]];
+  const antig = [["< 24 h",0],["24 – 48 h",0],["48 – 72 h",0],["> 72 h",0]];
+  hrsFS.forEach(h=>{ antig[h<24?0:h<48?1:h<72?2:3][1]++; });
+  const tipos = [["Fuera de servicio",recs.filter(r=>r.tipo==="FS").length],["Solicitud de revisión",recs.filter(r=>r.tipo==="REV").length]];
+  document.getElementById("pies").innerHTML =
+    pieCard("Estado actual de los equipos","Todos los equipos registrados en el período", estado, ["var(--fs)","var(--rev)","var(--op)"]) +
+    pieCard("Equipos detenidos por clase","F/S y revisiones vigentes", foldOther(count(abiertos,"clase"))) +
+    pieCard("Antigüedad de los F/S vigentes","Horas fuera de servicio a la fecha", antig.filter(e=>e[1]>0).length?antig:[], ["var(--s1)","var(--s4)","var(--s2)","var(--s8)"]) +
+    pieCard("Tipo de reporte","Total de reportes del período", tipos, ["var(--fs)","var(--rev)"]) +
+    pieCard("Reportes por persona","Quién reporta las fallas y revisiones", foldOther(count(recs,"reportado_por"))) +
+    pieCard("Operativos declarados por","Quién libera los equipos", foldOther(count(ops,"declarado_por")));
+}
+
+/* ---------- Interacción ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x===b));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.id===b.dataset.tab));
+});
+document.querySelectorAll("#f1tipo button").forEach(b=>b.onclick=()=>{ f1tipo=b.dataset.v; document.querySelectorAll("#f1tipo button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
+document.getElementById("f1q").oninput=render; document.getElementById("f2q").oninput=render;
+
+document.addEventListener("click",e=>{
+  const ed = e.target.closest(".edit");
+  if(ed && !ed.querySelector("input")){
+    const id=ed.dataset.id, f=ed.dataset.f; const cur = ed.classList.contains("empty")?"":ed.textContent;
+    ed.innerHTML=`<input value="${esc(cur)}">`; const inp=ed.querySelector("input"); inp.focus();
+    const commit=()=>{ const v=inp.value.trim().toUpperCase(); LOCAL.ediciones[id]=Object.assign(LOCAL.ediciones[id]||{},{[f]:v}); const n=LOCAL.nuevos.find(x=>x.id===id); if(n) n[f]=v; saveLocal(); render(); };
+    inp.addEventListener("keydown",k=>{ if(k.key==="Enter") inp.blur(); if(k.key==="Escape"){ inp.onblur=null; render(); } });
+    inp.onblur=commit; return;
+  }
+  const cl = e.target.closest("[data-close]");
+  if(cl){
+    const r = allRecords().find(x=>x.id===cl.dataset.close);
+    document.querySelector('nav button[data-tab="t2"]').click();
+    const f=document.getElementById("form2");
+    f.equipo.value=r.equipo; f.patente.value=r.patente||""; f.teck.value=r.teck||""; f.fecha_op.value=toLocalInput(new Date());
+    f.declarado_por.focus(); f.scrollIntoView({behavior:"smooth"});
+  }
+});
+
+document.getElementById("form1").addEventListener("submit",e=>{
+  e.preventDefault(); const f=e.target;
+  const r = { id:"M"+Date.now(), tipo:f.tipo.value, equipo:f.equipo.value.trim().toUpperCase(), patente:f.patente.value.trim().toUpperCase(), teck:f.teck.value.trim(),
+    clase:f.clase.value, reportado_por:f.reportado_por.value.trim(), fecha_reporte:fromLocalInput(f.fecha_reporte.value), condicion:f.condicion.value.trim(),
+    estado:"ABIERTO", fecha_op:"", declarado_por:"", nota:"", fuente:"Manual" };
+  LOCAL.nuevos.push(r); saveLocal(); f.reset(); f.fecha_reporte.value=toLocalInput(new Date()); render(); toast("Equipo "+r.equipo+" registrado");
+});
+document.getElementById("form2").addEventListener("submit",e=>{
+  e.preventDefault(); const f=e.target;
+  const code=f.equipo.value.trim().toUpperCase(); const fecha=fromLocalInput(f.fecha_op.value);
+  const datos={ fecha_op:fecha, declarado_por:f.declarado_por.value.trim() };
+  const nota=f.nota.value.trim(); const pat=f.patente.value.trim().toUpperCase(), teck=f.teck.value.trim();
+  const abiertos = allRecords().filter(r=>r.estado!=="OP" && r.equipo.toUpperCase()===code);
+  if(abiertos.length){
+    abiertos.forEach(r=>{
+      const extra = Object.assign({}, datos, nota?{nota:(r.nota?r.nota+" · ":"")+nota}:{});
+      const n=LOCAL.nuevos.find(x=>x.id===r.id);
+      if(n) Object.assign(n, extra, {estado:"OP"}); else LOCAL.cierres[r.id]=extra;
+      if(pat||teck) LOCAL.ediciones[r.id]=Object.assign(LOCAL.ediciones[r.id]||{}, pat?{patente:pat}:{}, teck?{teck}:{});
+    });
+    toast(code+" declarado operativo");
+  } else {
+    LOCAL.nuevos.push({ id:"M"+Date.now(), tipo:"FS", equipo:code, patente:pat, teck, clase:"Otro", reportado_por:datos.declarado_por, fecha_reporte:fecha,
+      condicion:"Declarado operativo (sin reporte de falla previo en el panel)", estado:"OP", fecha_op:fecha, declarado_por:datos.declarado_por, nota, fuente:"Manual" });
+    toast(code+" agregado como operativo");
+  }
+  saveLocal(); f.reset(); f.fecha_op.value=toLocalInput(new Date()); render();
+});
+
+/* ---------- Exportar ---------- */
+function download(name, text, type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); }
+function exportCSV(){
+  const cols=["id","tipo","estado","equipo","patente","teck","clase","reportado_por","fecha_reporte","condicion","fecha_op","declarado_por","nota","fuente"];
+  const rows=allRecords().map(r=>cols.map(c=>'"'+String(r[c]??"").replace(/"/g,'""')+'"').join(";"));
+  download("taller_cda.csv","﻿"+cols.join(";")+"\n"+rows.join("\n"),"text/csv");
+}
+function exportDataJS(){
+  const d=Object.assign({}, window.TALLER_DATA, {registros: allRecords()});
+  download("data.js","window.TALLER_DATA = "+JSON.stringify(d,null,2)+";\n","text/javascript");
+  toast("Sube este data.js al repositorio TallerCDA para compartir los cambios");
+}
+
+/* ---------- Tooltip ---------- */
+const tip=document.getElementById("tip");
+document.addEventListener("mousemove",e=>{ const s=e.target.closest("[data-tip]"); if(s){ tip.innerHTML=s.getAttribute("data-tip"); tip.style.display="block"; tip.style.left=(e.clientX+12)+"px"; tip.style.top=(e.clientY+12)+"px"; } else tip.style.display="none"; });
+
+/* ---------- Init ---------- */
+document.querySelector("#form1 [name=clase]").innerHTML = CLASES.map(c=>`<option>${c}</option>`).join("");
+document.querySelector("#form1 [name=fecha_reporte]").value = toLocalInput(new Date());
+document.querySelector("#form2 [name=fecha_op]").value = toLocalInput(new Date());
+render();
+setInterval(render, 60000);
+</script>
+</body>
+</html>
