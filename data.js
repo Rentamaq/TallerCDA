@@ -4,10 +4,10 @@
 // estado: "ABIERTO" (vigente) | "OP" (declarado operativo / reparado / listo)
 // Fechas ISO con hora de Chile (-03:00). Patente y N° Teck no vienen en los mensajes: completar cuando se conozcan.
 window.TALLER_DATA = {
-  actualizado: "2026-11-16T11:45:00-03:00",
+  actualizado: "2026-11-16T14:50:00-03:00",
   // Hora del último mensaje cubierto por la lectura del skill tallercda. La próxima lectura parte desde aquí.
-  ultima_lectura: "2026-11-16T09:58:00-03:00",
-  periodo: "Historial disponible desde 13/11/2026 07:55 hasta 16/11/2026 11:45",
+  ultima_lectura: "2026-11-16T12:39:00-03:00",
+  periodo: "Historial disponible desde 13/11/2026 07:55 hasta 16/11/2026 14:50",
   registros: [
     // ---------- FUERA DE SERVICIO / INGRESO A TALLER ----------
     { id: "W001", tipo: "FS", equipo: "REXA-01", patente: "", teck: "", clase: "Retroexcavadora",
@@ -20,9 +20,9 @@ window.TALLER_DATA = {
       estado: "ABIERTO", fecha_op: "", declarado_por: "", nota: "", fuente: "WhatsApp" },
     { id: "W003", tipo: "FS", equipo: "CA-25", patente: "", teck: "", clase: "Camión aljibe",
       reportado_por: "Javier Moroso", fecha_reporte: "2026-11-13T13:04:00-03:00",
-      condicion: "Baja a taller: regaderas no cortan",
+      condicion: "Baja a taller: regaderas no cortan (reiterado 16/11 12:35: aspersores siguen sin cortar)",
       estado: "ABIERTO", fecha_op: "", declarado_por: "",
-      nota: "14/11 15:53: reparación y reemplazo de componentes de regadío; pendiente prueba con agua", fuente: "WhatsApp" },
+      nota: "14/11 15:53: reparación y reemplazo de componentes de regadío; pendiente prueba con agua. 16/11 12:39: debe bajar a taller con un mínimo de agua en el estanque", fuente: "WhatsApp" },
     { id: "W004", tipo: "FS", equipo: "EX-32", patente: "", teck: "", clase: "Excavadora",
       reportado_por: "Pedro Orrego", fecha_reporte: "2026-11-13T17:13:00-03:00",
       condicion: "Códigos y alarmas activas; asistencia de técnico Finning",
@@ -113,7 +113,7 @@ window.TALLER_DATA = {
     { id: "W022", tipo: "REV", equipo: "CAA-04", patente: "", teck: "", clase: "Otro",
       reportado_por: "Andrea Ximena", fecha_reporte: "2026-11-16T11:12:00-03:00",
       condicion: "Alerta en tablero de batería baja de contacto (informa conductor)",
-      estado: "ABIERTO", fecha_op: "", declarado_por: "", nota: "Ubicado en PTOI", fuente: "WhatsApp" },
+      estado: "ABIERTO", fecha_op: "", declarado_por: "", nota: "Ubicado en PTOI (patio de Ambipar, al costado de bodega central)", fuente: "WhatsApp" },
     { id: "W023", tipo: "REV", equipo: "Rodillo doble tambor", patente: "", teck: "", clase: "Rodillo",
       reportado_por: "Javier Moroso", fecha_reporte: "2026-11-16T10:56:00-03:00",
       condicion: "Falta refrigerante",
