@@ -310,7 +310,6 @@ function render(){
       <td><select class="est-sel ${r.tipo==="FS"?"fs":"rev"}" data-est="${esc(r.id)}" title="Cambiar estado">
           <option value="FS" ${r.tipo==="FS"?"selected":""}>● Fuera de servicio</option>
           <option value="REV" ${r.tipo==="REV"?"selected":""}>▲ Solicita revisión</option>
-          <option value="OP">✔ Operativo…</option>
         </select>${r.fuente==="Manual"?' <span class="badge man">Manual</span>':''}${r.cambio_tipo?`<div class="muted small" style="margin-top:4px">Cambiado ${fmt(r.cambio_tipo)}${r.tipo_original?" (antes: "+(r.tipo_original==="FS"?"F/S":"revisión")+")":""}</div>`:""}</td>
       <td>${esc(r.reportado_por)}</td>
       <td class="code">${esc(r.equipo)}<div class="muted small">${esc(r.clase||"")}</div></td>
@@ -460,7 +459,7 @@ document.querySelectorAll("#avfil button").forEach(b=>b.onclick=()=>{ avFil=b.da
 document.addEventListener("change",e=>{
   const sel=e.target.closest("select[data-est]"); if(!sel) return;
   const id=sel.dataset.est, v=sel.value;
-  if(v==="OP"){ const td=sel.closest("tr").lastElementChild; const btn=td.querySelector("[data-close]"); if(btn) btn.click(); sel.value=allRecords().find(x=>x.id===id).tipo; return; }
+  if(v!=="FS" && v!=="REV") return;
   const r=allRecords().find(x=>x.id===id); if(!r || r.tipo===v) return;
   const base=(window.TALLER_DATA.registros||[]).find(x=>x.id===id);
   const orig = base ? base.tipo : (r.tipo_original||r.tipo);

@@ -13,7 +13,7 @@ Publicado en https://rentamaq.github.io/TallerCDA/ desde la rama `main` (raíz).
 - «Exportar CSV», «Descargar data.js». (Sin botón «Recargar»: René lo pidió quitar; se recarga con F5.)
 
 ## Pestañas
-1. **Fuera de servicio y revisiones**: arriba los mismos KPIs del Dashboard; registros con `estado: "ABIERTO"`. Columnas: Estado (desplegable editable: Fuera de servicio / Solicita revisión / Operativo…, muestra «Cambiado …» si se modificó), Reportado por, Código interno, Hora de reporte, Horas F/S (en vivo), Falla/motivo, botón «Declarar operativo» (confirmación en la misma fila). Formulario de ingreso abajo.
+1. **Fuera de servicio y revisiones**: arriba los mismos KPIs del Dashboard; registros con `estado: "ABIERTO"`. Columnas: Estado (desplegable editable solo entre Fuera de servicio y Solicita revisión; muestra «Cambiado …» si se modificó), Reportado por, Código interno, Hora de reporte, Horas F/S (en vivo), Falla/motivo, botón «Declarar operativo» (confirmación en la misma fila). Formulario de ingreso abajo.
 2. **Operativos**: registros con `estado: "OP"`. Columnas: Código interno, Hora de reporte, Declarado operativo, Tiempo desde operativo, Tiempo detenido, Declarado por, Detalle (+ «Reabrir» si se cerró en el navegador). Formulario de ingreso abajo.
 3. **Dashboard**: KPIs, torta 3D grande de «Averías por sistema» (clasificación por palabras clave en `SISTEMAS`) y 5 tortas 3D con tabla de leyenda, total y conclusión.
 
