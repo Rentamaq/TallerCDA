@@ -81,7 +81,9 @@
   .pie-card h3{margin:0 0 2px;font-size:14px;font-weight:650}
   .pie-card .desc{font-size:12px;color:var(--ink-3);margin-bottom:10px}
   .pie-body{display:flex;gap:16px;align-items:center}
-  .pie-body svg{flex:0 0 170px}
+  .pie-body svg{flex:0 0 200px;overflow:visible}
+  .slice.side{filter:brightness(.72)}
+  .edge{stroke:rgba(255,255,255,.9);stroke-width:2}
   .legend{list-style:none;margin:0;padding:0;flex:1;font-size:13px}
   .legend li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
   .legend li:last-child{border-bottom:0}
@@ -89,8 +91,8 @@
   .legend .nm{flex:1;color:var(--ink)}
   .legend .vl{font-variant-numeric:tabular-nums;font-weight:600}
   .legend .pc{font-variant-numeric:tabular-nums;color:var(--ink-3);width:42px;text-align:right}
-  .slice{stroke:var(--surface);stroke-width:2;cursor:default;transition:opacity .15s}
-  .pie-body svg:hover .slice{opacity:.55}.pie-body svg .slice:hover{opacity:1}
+  .slice{stroke:var(--surface);stroke-width:1.5;stroke-linejoin:round;cursor:default;transition:opacity .15s}
+  .pie-body svg:hover .slice{opacity:.6}.pie-body svg .slice:hover{opacity:1}
   #tip{position:fixed;pointer-events:none;background:#1d1d1b;color:#fff;font-size:12px;padding:6px 9px;border-radius:6px;display:none;z-index:50;max-width:260px}
   .empty-state{padding:24px;text-align:center;color:var(--ink-3)}
   .quick{display:flex;flex-direction:column;gap:5px;min-width:190px}
@@ -207,6 +209,7 @@
     <div class="pies" id="pies"></div>
   </section>
 </main>
+<svg width="0" height="0" style="position:absolute"><defs><radialGradient id="shine" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient></defs></svg>
 <div id="tip"></div>
 <div class="toast" id="toast"></div>
 
@@ -305,20 +308,32 @@ function render(){
 function count(arr, key){ const m=new Map(); arr.forEach(r=>{const k=typeof key==="function"?key(r):r[key]; m.set(k,(m.get(k)||0)+1);}); return [...m.entries()].sort((a,b)=>b[1]-a[1]); }
 function foldOther(entries, max=6){ if(entries.length<=max) return entries; const head=entries.slice(0,max-1); const rest=entries.slice(max-1).reduce((s,e)=>s+e[1],0); return head.concat([["Otros",rest]]); }
 function pieSVG(entries, colors){
-  const total = entries.reduce((s,e)=>s+e[1],0); const R=80, cx=85, cy=85;
-  if(!total) return `<svg viewBox="0 0 170 170" width="170" height="170"><circle cx="${cx}" cy="${cy}" r="${R}" fill="#eeede9"/><text x="85" y="90" text-anchor="middle" font-size="12" fill="#7d7b76">Sin datos</text></svg>`;
-  let a0=-Math.PI/2, out="";
-  entries.forEach((e,i)=>{
-    const frac=e[1]/total, a1=a0+frac*2*Math.PI;
-    const tipTxt = `${esc(e[0])}: ${e[1]} (${Math.round(frac*100)}%)`;
-    if(frac>=0.9999){ out+=`<circle class="slice" cx="${cx}" cy="${cy}" r="${R}" fill="${colors[i]}" data-tip="${tipTxt}"/>`; }
-    else{
-      const x0=cx+R*Math.cos(a0), y0=cy+R*Math.sin(a0), x1=cx+R*Math.cos(a1), y1=cy+R*Math.sin(a1);
-      out+=`<path class="slice" d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${R},${R} 0 ${a1-a0>Math.PI?1:0} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" fill="${colors[i]}" data-tip="${tipTxt}"/>`;
+  // Torta 3D: elipse inclinada con espesor. Las cifras exactas van en la leyenda.
+  const total = entries.reduce((s,e)=>s+e[1],0);
+  const W=200, H=150, cx=100, cy=62, RX=92, RY=54, D=20;
+  const P=(a,dy=0)=>`${(cx+RX*Math.cos(a)).toFixed(2)},${(cy+dy+RY*Math.sin(a)).toFixed(2)}`;
+  const shadow=`<ellipse cx="${cx}" cy="${cy+D+6}" rx="${RX}" ry="${RY*0.8}" fill="rgba(0,0,0,.10)"/>`;
+  if(!total) return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${shadow}<ellipse cx="${cx}" cy="${cy+D}" rx="${RX}" ry="${RY}" fill="#dcdad4"/><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="#eeede9"/><text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="12" fill="#7d7b76">Sin datos</text></svg>`;
+  const sl=[]; let a0=-Math.PI/2;
+  entries.forEach((e,i)=>{ const f=e[1]/total; const a1=a0+f*2*Math.PI; if(e[1]>0) sl.push({a0,a1,f,c:colors[i],tip:`${esc(e[0])}: ${e[1]} (${Math.round(f*100)}%)`}); a0=a1; });
+  let sides="", tops="", walls="";
+  sl.forEach(s=>{
+    // pared exterior: solo la parte frontal (ángulos entre 0 y π)
+    const s0=Math.max(s.a0,0), s1=Math.min(s.a1,Math.PI);
+    if(s1>s0){
+      const large=(s1-s0)>Math.PI?1:0;
+      sides+=`<path class="slice side" d="M${P(s0)} A${RX},${RY} 0 ${large} 1 ${P(s1)} L${P(s1,D)} A${RX},${RY} 0 ${large} 0 ${P(s0,D)} Z" fill="${s.c}" data-tip="${s.tip}"/>`;
     }
-    a0=a1;
+    if(s.f>=0.9999){ tops+=`<ellipse class="slice" cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="${s.c}" data-tip="${s.tip}"/>`; }
+    else{
+      const large=(s.a1-s.a0)>Math.PI?1:0;
+      tops+=`<path class="slice" d="M${cx},${cy} L${P(s.a0)} A${RX},${RY} 0 ${large} 1 ${P(s.a1)} Z" fill="${s.c}" data-tip="${s.tip}"/>`;
+    }
   });
-  return `<svg viewBox="0 0 170 170" width="170" height="170" role="img">${out}</svg>`;
+  if(sl.length>1){ // bordes de corte visibles en el frente
+    sl.forEach(s=>{ [s.a0].forEach(a=>{ if(Math.sin(a)>0.02) walls+=`<path class="edge" d="M${P(a)} L${P(a,D)}"/>`; }); });
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">${shadow}<g>${sides}</g>${walls}<g>${tops}</g><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="url(#shine)" pointer-events="none"/></svg>`;
 }
 function pieCard(title, desc, entries, colors){
   colors = colors || COLORS;
