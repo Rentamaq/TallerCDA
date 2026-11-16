@@ -10,7 +10,7 @@ Publicado en https://rentamaq.github.io/TallerCDA/ desde la rama `main` (raíz).
 
 ## Botones del encabezado
 - «⟳ Actualizar»: abre Claude (app de escritorio vía `claude://claude.ai/new?q=/tallercda`, o claude.ai en la web si la app no responde) con `/tallercda` escrito y lo copia al portapapeles. René presiona Enter para ejecutar el skill.
-- «Recargar», «Exportar CSV», «Descargar data.js».
+- «Exportar CSV», «Descargar data.js». (Sin botón «Recargar»: René lo pidió quitar; se recarga con F5.)
 
 ## Pestañas
 1. **Fuera de servicio y revisiones**: arriba los mismos KPIs del Dashboard; registros con `estado: "ABIERTO"`. Columnas: Estado, Reportado por, Código interno, Hora de reporte, Horas F/S (en vivo), Falla/motivo, botón «Declarar operativo» (confirmación en la misma fila). Formulario de ingreso abajo.

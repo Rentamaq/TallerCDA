@@ -143,7 +143,6 @@
   </div>
   <div class="actions">
   <button class="hb-main" onclick="actualizarConClaude()" title="Abre Claude con /tallercda para leer el grupo de WhatsApp y actualizar el panel">⟳ Actualizar</button>
-  <button onclick="location.reload(true)" title="Vuelve a cargar los datos publicados">Recargar</button>
   <button onclick="exportCSV()">Exportar CSV</button>
   <button onclick="exportDataJS()" title="Descarga data.js con los ingresos manuales incluidos, para subirlo al repositorio">Descargar data.js</button>
   </div>
@@ -535,7 +534,7 @@ function actualizarConClaude(){
   location.href = "claude://claude.ai/new?q="+q;
   // 2) Si la app no está instalada, abrir Claude en la web
   setTimeout(()=>{ window.removeEventListener("blur", onBlur); if(!salio && !document.hidden) window.open("https://claude.ai/new?q="+q, "_blank"); }, 1500);
-  toast("Se abre Claude con /tallercda: presiona Enter. Al terminar, usa «Recargar».");
+  toast("Se abre Claude con /tallercda: presiona Enter. Al terminar, recarga esta página (F5).");
 }
 
 /* ---------- Exportar ---------- */
