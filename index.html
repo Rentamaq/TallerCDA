@@ -99,6 +99,13 @@
   .quick input{padding:5px 7px;border:1px solid var(--line-strong);border-radius:5px;font-size:12px;font-family:inherit}
   .quick input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
   .q-btns{display:flex;gap:5px}
+  .bars{display:grid;grid-template-columns:minmax(150px,230px) 1fr 40px;gap:9px 12px;align-items:center}
+  .bars .bl{font-size:13px;color:var(--ink);text-align:right}
+  .bars .bt{height:20px;background:#efeee9;border-radius:0 4px 4px 0;position:relative}
+  .bars .bf{height:100%;background:var(--brand-2);border-radius:0 4px 4px 0;min-width:3px;transition:filter .15s}
+  .bars .row:hover .bf,.bars .bf:hover{filter:brightness(.9)}
+  .bars .bv{font-weight:700;font-variant-numeric:tabular-nums}
+  .bars .be{font-size:11px;color:var(--ink-3);margin-top:2px;text-align:right}
   .toast{position:fixed;bottom:20px;right:20px;background:#1d1d1b;color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;display:none;z-index:60}
   .note-src{font-size:12px;color:var(--ink-3);margin-top:6px}
   @media (max-width:700px){ .pie-body{flex-direction:column} main{padding:14px} }
@@ -206,6 +213,12 @@
   <!-- ================= PESTAÑA 3 ================= -->
   <section class="tab" id="t3">
     <div class="kpis" id="kpis"></div>
+    <div class="card" id="averias-card">
+      <h2>Estadística de averías por sistema <small id="av-sub"></small></h2>
+      <div class="toolbar"><div class="seg" id="avfil"><button class="on" data-v="ALL">Todo el período</button><button data-v="OPEN">Solo vigentes</button></div></div>
+      <div id="averias"></div>
+      <div class="note-src">Clasificación automática según el texto de la falla. Un equipo puede sumar en más de un sistema (ej.: EX-11 por batería y por luces). Pasa el mouse por una barra para ver los equipos.</div>
+    </div>
     <div class="pies" id="pies"></div>
   </section>
 </main>
@@ -341,7 +354,35 @@ function pieCard(title, desc, entries, colors){
   const legend = entries.map((e,i)=>`<li><span class="sw" style="background:${colors[i]}"></span><span class="nm">${esc(e[0])}</span><span class="vl">${e[1]}</span><span class="pc">${total?Math.round(e[1]/total*100):0}%</span></li>`).join("");
   return `<div class="pie-card"><h3>${esc(title)}</h3><div class="desc">${esc(desc)}</div><div class="pie-body">${pieSVG(entries,colors)}<ul class="legend">${legend}</ul></div></div>`;
 }
+const SISTEMAS = [
+  ["Embrague", /embrag|embriag/i],
+  ["Luces y señalización (focos, baliza, pértiga)", /luz|luces|foco|baliza|p[eé]rtiga/i],
+  ["Sistema eléctrico (batería, alternador)", /bater[ií]a|alternador|el[eé]ctric/i],
+  ["Aceite / refrigerante (niveles y fugas)", /aceite|refrigerante|fluido|lubric/i],
+  ["Neumáticos", /neum[aá]tico|pinchad/i],
+  ["Vidrios, puertas y cabina", /vidrio|parabrisas|trizadura|puerta|aire acondicionado|cabina/i],
+  ["Códigos y alarmas de motor / filtros", /c[oó]digo|alarma|filtro/i],
+  ["Sistema de regadío", /regader|regad[ií]o/i],
+  ["Pasadores y estructura", /pasador|calza|soldad|estructura/i],
+  ["Seguridad (extintor, parada de emergencia)", /extintor|parada de emergencia/i],
+  ["Mantención programada", /mantenci[oó]n programada/i],
+  ["Revisión técnica", /revisi[oó]n t[eé]cnica/i]
+];
+let avFil="ALL";
+function renderAverias(recs){
+  const base = avFil==="OPEN" ? recs.filter(r=>r.estado!=="OP") : recs;
+  const m = SISTEMAS.map(([n])=>({n,eq:[]})); const otros={n:"Otros / sin clasificar",eq:[]};
+  base.forEach(r=>{ const txt=(r.condicion||""); let hit=false; SISTEMAS.forEach(([n,re],i)=>{ if(re.test(txt)){ m[i].eq.push(r.equipo); hit=true; } }); if(!hit) otros.eq.push(r.equipo); });
+  const rows = m.concat([otros]).filter(x=>x.eq.length).sort((a,b)=>b.eq.length-a.eq.length || a.n.localeCompare(b.n));
+  const max = Math.max(1,...rows.map(x=>x.eq.length));
+  const totalAv = rows.reduce((s,x)=>s+x.eq.length,0);
+  document.getElementById("av-sub").textContent = `${totalAv} averías en ${base.length} reportes`;
+  document.getElementById("averias").innerHTML = rows.length ? `<div class="bars">${rows.map(x=>{
+    const tip=`${esc(x.n)}: ${x.eq.length} (${Math.round(x.eq.length/totalAv*100)}%)<br>${esc([...new Set(x.eq)].join(", "))}`;
+    return `<div class="bl">${esc(x.n)}</div><div class="bt" data-tip="${tip}"><div class="bf" style="width:${(x.eq.length/max*100).toFixed(1)}%"></div></div><div class="bv">${x.eq.length}</div>`;}).join("")}</div>` : '<div class="empty-state">Sin averías para este filtro.</div>';
+}
 function renderDashboard(recs, abiertos, ops, now){
+  renderAverias(recs);
   const fsAb = abiertos.filter(r=>r.tipo==="FS"), revAb = abiertos.filter(r=>r.tipo==="REV");
   const hrsFS = fsAb.map(r=>hoursBetween(r.fecha_reporte, now));
   const prom = hrsFS.length? hrsFS.reduce((a,b)=>a+b,0)/hrsFS.length : 0;
@@ -374,6 +415,7 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.id===b.dataset.tab));
 });
 document.querySelectorAll("#f1tipo button").forEach(b=>b.onclick=()=>{ f1tipo=b.dataset.v; document.querySelectorAll("#f1tipo button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
+document.querySelectorAll("#avfil button").forEach(b=>b.onclick=()=>{ avFil=b.dataset.v; document.querySelectorAll("#avfil button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
 document.getElementById("f1q").oninput=render; document.getElementById("f2q").oninput=render;
 
 document.addEventListener("click",e=>{
