@@ -4,42 +4,45 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Taller Rentamaq CDA · Estado de equipos</title>
+<link rel="icon" href="logo-rentamaq.png">
 <style>
   :root{
     --bg:#f4f3f0; --surface:#fcfcfb; --line:#e3e1dc; --line-strong:#cfccc5;
     --ink:#0b0b0b; --ink-2:#52514e; --ink-3:#7d7b76;
-    --brand:#1d2b3a; --brand-2:#f2a900;
+    --brand:#2b2b2b; --brand-2:#e88305; --brand-gray:#636363; --brand-2-dark:#c46d00;
     --fs:#e34948; --rev:#eda100; --op:#008300;
     --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948;
     --radius:10px;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
-  header{background:var(--brand);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-  header .logo{width:38px;height:38px;border-radius:8px;background:var(--brand-2);display:grid;place-items:center;font-weight:800;color:var(--brand);font-size:15px}
+  header{background:var(--brand);border-top:4px solid var(--brand-2);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  header .logo{background:#fdfdfd;border-radius:8px;padding:6px 10px;display:flex;align-items:center}
+  header .logo img{height:30px;width:auto;display:block}
   header h1{font-size:18px;margin:0;font-weight:650}
   header .sub{font-size:12px;opacity:.75;margin-top:2px}
-  header .grow{flex:1}
+  header .ttl{flex:1;min-width:280px}
+  header .actions{display:flex;gap:8px;flex-wrap:wrap}
   header button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:13px}
   header button:hover{background:rgba(255,255,255,.1)}
   nav{display:flex;gap:4px;padding:0 22px;background:var(--brand);border-top:1px solid rgba(255,255,255,.08)}
   nav button{background:none;border:0;color:rgba(255,255,255,.7);padding:12px 16px;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;font-weight:550}
   nav button.active{color:#fff;border-bottom-color:var(--brand-2)}
-  nav .count{display:inline-block;min-width:20px;padding:1px 6px;margin-left:6px;border-radius:10px;background:rgba(255,255,255,.15);font-size:12px}
+  nav .count{display:inline-block;min-width:20px;padding:1px 6px;margin-left:6px;border-radius:10px;background:var(--brand-2);color:#fff;font-size:12px}
   main{padding:20px 22px 40px;max-width:1500px;margin:0 auto}
   .tab{display:none}.tab.active{display:block}
   .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px}
-  .card h2{font-size:15px;margin:0 0 12px;font-weight:650}
+  .card h2{font-size:15px;margin:0 0 12px;font-weight:650;padding-left:10px;border-left:4px solid var(--brand-2)}
   .card h2 small{font-weight:400;color:var(--ink-3);font-size:12px;margin-left:6px}
   .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
   .toolbar input[type=search],.toolbar select{padding:7px 10px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;background:#fff}
   .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:7px;overflow:hidden}
   .seg button{border:0;background:#fff;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--ink-2)}
   .seg button+button{border-left:1px solid var(--line-strong)}
-  .seg button.on{background:var(--brand);color:#fff}
+  .seg button.on{background:var(--brand-2);color:#fff}
   .table-wrap{overflow-x:auto}
   table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;font-weight:600;color:var(--ink-2);font-size:12px;text-transform:uppercase;letter-spacing:.02em;padding:9px 10px;border-bottom:1px solid var(--line-strong);white-space:nowrap;background:#f8f7f4;position:sticky;top:0}
+  th{text-align:left;font-weight:600;color:var(--brand-gray);font-size:12px;text-transform:uppercase;letter-spacing:.02em;padding:9px 10px;border-bottom:1px solid var(--line-strong);white-space:nowrap;background:#f8f7f4;position:sticky;top:0}
   td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
   tr:hover td{background:#faf9f6}
   .code{font-weight:700;white-space:nowrap}
@@ -54,20 +57,21 @@
   .hrs.h1{color:#8a5d00}.hrs.h2{color:#c2410c}.hrs.h3{color:#b3201f}
   .edit{cursor:pointer;border-bottom:1px dashed var(--line-strong);min-width:60px;display:inline-block}
   .edit.empty{color:var(--ink-3)}
-  .edit input{width:110px;padding:3px 5px;font-size:13px;border:1px solid var(--s1);border-radius:4px}
-  .btn{background:var(--brand);color:#fff;border:0;padding:8px 14px;border-radius:7px;font-size:13px;cursor:pointer;font-weight:550}
+  .edit input{width:110px;padding:3px 5px;font-size:13px;border:1px solid var(--brand-2);border-radius:4px}
+  .btn{background:var(--brand-2);color:#fff;border:0;padding:8px 14px;border-radius:7px;font-size:13px;cursor:pointer;font-weight:550}
   .btn.ok{background:var(--op)}
   .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line-strong)}
   .btn.sm{padding:4px 9px;font-size:12px}
   .btn:hover{filter:brightness(1.08)}
   form.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px 14px;align-items:end}
   form.grid label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink-2);font-weight:550}
+  form.grid input:focus,form.grid select:focus,form.grid textarea:focus,.toolbar input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
   form.grid input,form.grid select,form.grid textarea{padding:8px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;font-family:inherit;background:#fff}
   form.grid .wide{grid-column:1/-1}
   form.grid textarea{min-height:56px;resize:vertical}
   .hint{font-size:12px;color:var(--ink-3);margin-top:8px}
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
-  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+  .kpi{border-top:3px solid var(--brand-gray)!important;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
   .kpi .lab{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
   .kpi .val{font-size:30px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
   .kpi .foot{font-size:12px;color:var(--ink-3);margin-top:2px}
@@ -96,15 +100,16 @@
 </head>
 <body>
 <header>
-  <div class="logo">RM</div>
-  <div>
-    <h1>Taller Rentamaq CDA · Estado de equipos</h1>
+  <div class="logo"><img src="logo-rentamaq.png" alt="RentaMaq"></div>
+  <div class="ttl">
+    <h1>Taller CDA · Estado de equipos</h1>
     <div class="sub" id="sub">—</div>
   </div>
-  <div class="grow"></div>
+  <div class="actions">
   <button onclick="location.reload(true)" title="Recargar datos">⟳ Actualizar</button>
   <button onclick="exportCSV()">Exportar CSV</button>
   <button onclick="exportDataJS()" title="Descarga data.js con los ingresos manuales incluidos, para subirlo al repositorio">Descargar data.js</button>
+  </div>
 </header>
 <nav>
   <button class="active" data-tab="t1">Fuera de servicio y revisiones <span class="count" id="c1">0</span></button>
