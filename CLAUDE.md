@@ -10,7 +10,7 @@ Publicado en https://rentamaq.github.io/TallerCDA/ desde la rama `main` (raíz).
 
 ## Botones del encabezado
 - «⟳ Actualizar»: abre Claude (app de escritorio vía `claude://claude.ai/new?q=/tallercda`, o claude.ai en la web si la app no responde) con `/tallercda` escrito y lo copia al portapapeles. René presiona Enter para ejecutar el skill.
-- «Exportar CSV», «Descargar data.js». (Sin botón «Recargar»: René lo pidió quitar; se recarga con F5.)
+- «Exportar CSV». (René pidió quitar «Recargar» y «Descargar data.js»; se recarga con F5.)
 
 ## Pestañas
 1. **Fuera de servicio y revisiones**: arriba los mismos KPIs del Dashboard; registros con `estado: "ABIERTO"`. Columnas: Estado (desplegable editable solo entre Fuera de servicio y Solicita revisión; muestra «Cambiado …» si se modificó), Reportado por, Código interno, Hora de reporte, Horas F/S (en vivo), Falla/motivo, botón «Declarar operativo» (confirmación en la misma fila). Formulario de ingreso abajo.
@@ -19,7 +19,7 @@ Publicado en https://rentamaq.github.io/TallerCDA/ desde la rama `main` (raíz).
 
 Decisiones ya tomadas por René: sin columnas Patente ni N° Teck; tortas en 3D; colores corporativos (gris #2b2b2b / #636363, naranjo #e88305); estados en rojo/amarillo/verde; sin el gráfico «Quién declara los equipos operativos».
 
-Los ingresos manuales, cierres y reaperturas se guardan en `localStorage` (`tallercda_local_v1`) del navegador; «Descargar data.js» exporta todo para subirlo al repo.
+Los ingresos manuales, cierres y reaperturas se guardan en `localStorage` (`tallercda_local_v1`) del navegador; no hay botón para exportarlos (René lo pidió quitar), así que los cambios que deben ver todos se cargan en data.js vía WhatsApp/skill.
 
 ## Formato de un registro (data.js)
 ```js

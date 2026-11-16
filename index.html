@@ -149,7 +149,6 @@
   <div class="actions">
   <button class="hb-main" onclick="actualizarConClaude()" title="Abre Claude con /tallercda para leer el grupo de WhatsApp y actualizar el panel">⟳ Actualizar</button>
   <button onclick="exportCSV()">Exportar CSV</button>
-  <button onclick="exportDataJS()" title="Descarga data.js con los ingresos manuales incluidos, para subirlo al repositorio">Descargar data.js</button>
   </div>
 </header>
 <nav>
@@ -198,7 +197,7 @@
         <label class="wide">Falla / motivo *<textarea name="condicion" required placeholder="Describe la falla o el motivo del ingreso"></textarea></label>
         <div><button class="btn" type="submit">Registrar equipo</button></div>
       </form>
-      <div class="hint">Los ingresos manuales quedan guardados en este navegador. Para compartirlos con todos, usa «Descargar data.js» y súbelo al repositorio.</div>
+      <div class="hint">Los ingresos manuales quedan guardados en este navegador.</div>
     </div>
   </section>
 
@@ -298,7 +297,7 @@ function render(){
   document.getElementById("c1").textContent = abiertos.length;
   document.getElementById("c2").textContent = ops.length;
   const d = window.TALLER_DATA||{};
-  document.getElementById("sub").textContent = "Grupo WhatsApp «Taller Rentamaq CDA» · Actualizado "+fmt(d.actualizado)+" · "+(d.periodo||"");
+  document.getElementById("sub").textContent = "Actualizado "+fmt(d.actualizado)+" · "+(d.periodo||"");
 
   // Tab 1
   const q1 = document.getElementById("f1q").value.trim();
