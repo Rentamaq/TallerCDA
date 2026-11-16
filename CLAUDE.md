@@ -8,6 +8,10 @@ Publicado en https://rentamaq.github.io/TallerCDA/ desde la rama `main` (raíz).
 - `data.js` – `window.TALLER_DATA = { actualizado, ultima_lectura, periodo, registros: [...] }`. `ultima_lectura` marca hasta dónde se leyó el grupo (lo usa el skill `tallercda`). Es lo único que cambia en cada lectura del grupo.
 - `logo-rentamaq.png` – logo corporativo (encabezado y favicon).
 
+## Botones del encabezado
+- «⟳ Actualizar desde WhatsApp»: abre Claude (app de escritorio vía `claude://claude.ai/new?q=/tallercda`, o claude.ai en la web si la app no responde) con `/tallercda` escrito y lo copia al portapapeles. René presiona Enter para ejecutar el skill.
+- «Recargar», «Exportar CSV», «Descargar data.js».
+
 ## Pestañas
 1. **Fuera de servicio y revisiones**: registros con `estado: "ABIERTO"`. Columnas: Estado, Reportado por, Código interno, Hora de reporte, Horas F/S (en vivo), Falla/motivo, botón «Declarar operativo» (confirmación en la misma fila). Formulario de ingreso abajo.
 2. **Operativos**: registros con `estado: "OP"`. Columnas: Código interno, Hora de reporte, Declarado operativo, Tiempo desde operativo, Tiempo detenido, Declarado por, Detalle (+ «Reabrir» si se cerró en el navegador). Formulario de ingreso abajo.

@@ -23,6 +23,8 @@
   header .sub{font-size:12px;opacity:.75;margin-top:2px}
   header .ttl{flex:1;min-width:280px}
   header .actions{display:flex;gap:8px;flex-wrap:wrap}
+  header button.hb-main{background:var(--brand-2);border-color:var(--brand-2);font-weight:650}
+  header button.hb-main:hover{background:var(--brand-2-dark)}
   header button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:13px}
   header button:hover{background:rgba(255,255,255,.1)}
   nav{display:flex;gap:4px;padding:0 22px;background:var(--brand);border-top:1px solid rgba(255,255,255,.08)}
@@ -140,7 +142,8 @@
     <div class="sub" id="sub">—</div>
   </div>
   <div class="actions">
-  <button onclick="location.reload(true)" title="Recargar datos">⟳ Actualizar</button>
+  <button class="hb-main" onclick="actualizarConClaude()" title="Abre Claude con /tallercda para leer el grupo de WhatsApp y actualizar el panel">⟳ Actualizar desde WhatsApp</button>
+  <button onclick="location.reload(true)" title="Vuelve a cargar los datos publicados">Recargar</button>
   <button onclick="exportCSV()">Exportar CSV</button>
   <button onclick="exportDataJS()" title="Descarga data.js con los ingresos manuales incluidos, para subirlo al repositorio">Descargar data.js</button>
   </div>
@@ -520,6 +523,18 @@ document.getElementById("form2").addEventListener("submit",e=>{
   }
   saveLocal(); f.reset(); f.fecha_op.value=toLocalInput(new Date()); render();
 });
+
+/* ---------- Actualizar con el skill tallercda ---------- */
+function actualizarConClaude(){
+  const q = encodeURIComponent("/tallercda");
+  try{ navigator.clipboard && navigator.clipboard.writeText("/tallercda"); }catch(_){}
+  // 1) App de escritorio de Claude (tiene acceso a Chrome y WhatsApp Web)
+  let salio=false; const onBlur=()=>{ salio=true; }; window.addEventListener("blur", onBlur, {once:true});
+  location.href = "claude://claude.ai/new?q="+q;
+  // 2) Si la app no está instalada, abrir Claude en la web
+  setTimeout(()=>{ window.removeEventListener("blur", onBlur); if(!salio && !document.hidden) window.open("https://claude.ai/new?q="+q, "_blank"); }, 1500);
+  toast("Se abre Claude con /tallercda: presiona Enter. Al terminar, usa «Recargar».");
+}
 
 /* ---------- Exportar ---------- */
 function download(name, text, type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); }
