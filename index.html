@@ -112,6 +112,11 @@
   .pie-body svg:hover .slice{opacity:.6}.pie-body svg .slice:hover{opacity:1}
   #tip{position:fixed;pointer-events:none;background:#1d1d1b;color:#fff;font-size:12px;padding:6px 9px;border-radius:6px;display:none;z-index:50;max-width:260px}
   .empty-state{padding:24px;text-align:center;color:var(--ink-3)}
+  .est-sel{appearance:none;-webkit-appearance:none;border:1px solid;border-radius:999px;padding:3px 24px 3px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background-repeat:no-repeat;background-position:right 8px center;background-size:8px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E")}
+  .est-sel.fs{color:#b3201f;background-color:#fdeceb;border-color:#f6c3c2}
+  .est-sel.rev{color:#8a5d00;background-color:#fff4dc;border-color:#f3d796}
+  .est-sel:focus{outline:2px solid var(--brand-2);outline-offset:1px}
+  .est-sel option{color:#111;background:#fff}
   .quick{display:flex;flex-direction:column;gap:5px;min-width:190px}
   .quick input{padding:5px 7px;border:1px solid var(--line-strong);border-radius:5px;font-size:12px;font-family:inherit}
   .quick input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
@@ -302,7 +307,11 @@ function render(){
     const h = hoursBetween(r.fecha_reporte, now);
     const cls = h>=72?"h3":h>=24?"h2":"h1";
     return `<tr>
-      <td>${badge(r)}${r.fuente==="Manual"?' <span class="badge man">Manual</span>':''}</td>
+      <td><select class="est-sel ${r.tipo==="FS"?"fs":"rev"}" data-est="${esc(r.id)}" title="Cambiar estado">
+          <option value="FS" ${r.tipo==="FS"?"selected":""}>● Fuera de servicio</option>
+          <option value="REV" ${r.tipo==="REV"?"selected":""}>▲ Solicita revisión</option>
+          <option value="OP">✔ Operativo…</option>
+        </select>${r.fuente==="Manual"?' <span class="badge man">Manual</span>':''}${r.cambio_tipo?`<div class="muted small" style="margin-top:4px">Cambiado ${fmt(r.cambio_tipo)}${r.tipo_original?" (antes: "+(r.tipo_original==="FS"?"F/S":"revisión")+")":""}</div>`:""}</td>
       <td>${esc(r.reportado_por)}</td>
       <td class="code">${esc(r.equipo)}<div class="muted small">${esc(r.clase||"")}</div></td>
       <td style="white-space:nowrap">${fmt(r.fecha_reporte)}</td>
@@ -448,6 +457,18 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
 });
 document.querySelectorAll("#f1tipo button").forEach(b=>b.onclick=()=>{ f1tipo=b.dataset.v; document.querySelectorAll("#f1tipo button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
 document.querySelectorAll("#avfil button").forEach(b=>b.onclick=()=>{ avFil=b.dataset.v; document.querySelectorAll("#avfil button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
+document.addEventListener("change",e=>{
+  const sel=e.target.closest("select[data-est]"); if(!sel) return;
+  const id=sel.dataset.est, v=sel.value;
+  if(v==="OP"){ const td=sel.closest("tr").lastElementChild; const btn=td.querySelector("[data-close]"); if(btn) btn.click(); sel.value=allRecords().find(x=>x.id===id).tipo; return; }
+  const r=allRecords().find(x=>x.id===id); if(!r || r.tipo===v) return;
+  const base=(window.TALLER_DATA.registros||[]).find(x=>x.id===id);
+  const orig = base ? base.tipo : (r.tipo_original||r.tipo);
+  const cambio = v===orig ? {tipo:v, cambio_tipo:"", tipo_original:""} : {tipo:v, cambio_tipo:new Date().toISOString(), tipo_original:orig};
+  const n=LOCAL.nuevos.find(x=>x.id===id);
+  if(n) Object.assign(n,cambio); else LOCAL.ediciones[id]=Object.assign(LOCAL.ediciones[id]||{},cambio);
+  saveLocal(); render(); toast(r.equipo+" ahora: "+(v==="FS"?"Fuera de servicio":"Solicita revisión"));
+});
 document.getElementById("f1q").oninput=render; document.getElementById("f2q").oninput=render;
 
 document.addEventListener("click",e=>{
