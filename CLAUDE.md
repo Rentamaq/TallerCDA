@@ -5,7 +5,7 @@ Publicado en https://rentamaq.github.io/TallerCDA/ desde la rama `main` (raíz).
 
 ## Archivos
 - `index.html` – todo el panel (HTML + CSS + JS, sin dependencias externas).
-- `data.js` – `window.TALLER_DATA = { actualizado, periodo, registros: [...] }`. Es lo único que cambia en cada lectura del grupo.
+- `data.js` – `window.TALLER_DATA = { actualizado, ultima_lectura, periodo, registros: [...] }`. `ultima_lectura` marca hasta dónde se leyó el grupo (lo usa el skill `tallercda`). Es lo único que cambia en cada lectura del grupo.
 - `logo-rentamaq.png` – logo corporativo (encabezado y favicon).
 
 ## Pestañas

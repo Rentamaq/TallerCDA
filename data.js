@@ -5,6 +5,8 @@
 // Fechas ISO con hora de Chile (-03:00). Patente y N° Teck no vienen en los mensajes: completar cuando se conozcan.
 window.TALLER_DATA = {
   actualizado: "2026-11-16T10:05:00-03:00",
+  // Hora del último mensaje cubierto por la lectura del skill tallercda. La próxima lectura parte desde aquí.
+  ultima_lectura: "2026-11-16T09:58:00-03:00",
   periodo: "Historial disponible desde 13/11/2026 07:55 hasta 16/11/2026 10:05",
   registros: [
     // ---------- FUERA DE SERVICIO / INGRESO A TALLER ----------
