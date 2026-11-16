@@ -157,6 +157,7 @@
 <main>
   <!-- ================= PESTAÑA 1 ================= -->
   <section class="tab active" id="t1">
+    <div class="kpis" id="kpis1"></div>
     <div class="card">
       <h2>Equipos fuera de servicio y solicitudes de revisión <small>vigentes · horas calculadas en tiempo real</small></h2>
       <div class="toolbar">
@@ -421,6 +422,7 @@ function renderDashboard(recs, abiertos, ops, now){
     <div class="kpi"><div class="lab"><span class="dot" style="background:var(--op)"></span>Declarados operativos</div><div class="val">${ops.length}</div><div class="foot">en el período</div></div>
     <div class="kpi"><div class="lab">Promedio F/S vigente</div><div class="val">${dur(prom)}</div><div class="foot">${masAntiguo?"más antiguo: "+esc(masAntiguo.equipo)+" ("+dur(hoursBetween(masAntiguo.fecha_reporte,now))+")":"—"}</div></div>
     <div class="kpi"><div class="lab">Tiempo medio de reparación</div><div class="val">${cerradosFS.length?dur(mttr):"—"}</div><div class="foot">${cerradosFS.length} F/S cerrados con hora de ingreso</div></div>`;
+  document.getElementById("kpis1").innerHTML = document.getElementById("kpis").innerHTML;
 
   const estado = [["Fuera de servicio (detenido)",fsAb.length],["Pendiente de revisión (opera)",revAb.length],["Operativo / reparado",ops.length]];
   const nEq = estado.reduce((s,e)=>s+e[1],0);
