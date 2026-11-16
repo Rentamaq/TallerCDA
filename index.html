@@ -93,6 +93,10 @@
   .pie-body svg:hover .slice{opacity:.55}.pie-body svg .slice:hover{opacity:1}
   #tip{position:fixed;pointer-events:none;background:#1d1d1b;color:#fff;font-size:12px;padding:6px 9px;border-radius:6px;display:none;z-index:50;max-width:260px}
   .empty-state{padding:24px;text-align:center;color:var(--ink-3)}
+  .quick{display:flex;flex-direction:column;gap:5px;min-width:190px}
+  .quick input{padding:5px 7px;border:1px solid var(--line-strong);border-radius:5px;font-size:12px;font-family:inherit}
+  .quick input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
+  .q-btns{display:flex;gap:5px}
   .toast{position:fixed;bottom:20px;right:20px;background:#1d1d1b;color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;display:none;z-index:60}
   .note-src{font-size:12px;color:var(--ink-3);margin-top:6px}
   @media (max-width:700px){ .pie-body{flex-direction:column} main{padding:14px} }
@@ -289,7 +293,7 @@ function render(){
       <td><span class="hrs" style="color:var(--op)">${dur(desde)}</span></td>
       <td class="muted">${det>0.01?dur(det):"—"}</td>
       <td>${esc(r.declarado_por)}</td>
-      <td>${esc(r.condicion)}${r.nota?`<div class="muted small">${esc(r.nota)}</div>`:""}</td>
+      <td>${esc(r.condicion)}${r.nota?`<div class="muted small">${esc(r.nota)}</div>`:""}${r.cerrado_local?`<div><button class="btn ghost sm" style="margin-top:6px" data-reopen="${esc(r.id)}" title="Deshacer: vuelve a Fuera de servicio">↩ Reabrir</button></div>`:""}</td>
     </tr>`;}).join("") : `<tr><td colspan="9" class="empty-state">Aún no hay equipos declarados operativos.</td></tr>`;
 
   document.getElementById("dl-abiertos").innerHTML = abiertos.map(r=>`<option value="${esc(r.equipo)}">${r.tipo==="FS"?"F/S":"Revisión"} · ${esc(r.condicion).slice(0,50)}</option>`).join("");
@@ -368,13 +372,40 @@ document.addEventListener("click",e=>{
   }
   const cl = e.target.closest("[data-close]");
   if(cl){
-    const r = allRecords().find(x=>x.id===cl.dataset.close);
-    document.querySelector('nav button[data-tab="t2"]').click();
-    const f=document.getElementById("form2");
-    f.equipo.value=r.equipo; f.patente.value=r.patente||""; f.teck.value=r.teck||""; f.fecha_op.value=toLocalInput(new Date());
-    f.declarado_por.focus(); f.scrollIntoView({behavior:"smooth"});
+    const id=cl.dataset.close, td=cl.parentElement;
+    let nombre=""; try{ nombre=localStorage.getItem("tallercda_nombre")||""; }catch(_){}
+    td.innerHTML=`<div class="quick" data-qid="${esc(id)}">
+      <input class="q-nom" placeholder="Declarado por" value="${esc(nombre)}">
+      <input class="q-fec" type="datetime-local" value="${toLocalInput(new Date())}">
+      <input class="q-not" placeholder="Trabajo realizado (opcional)">
+      <div class="q-btns"><button class="btn ok sm" data-qok>Confirmar</button><button class="btn ghost sm" data-qno>Cancelar</button></div></div>`;
+    td.querySelector(nombre?".q-not":".q-nom").focus(); return;
   }
+  if(e.target.closest("[data-qno]")){ render(); return; }
+  if(e.target.closest("[data-qok]")){
+    const q=e.target.closest(".quick"); const id=q.dataset.qid;
+    const nom=q.querySelector(".q-nom").value.trim(); if(!nom){ q.querySelector(".q-nom").focus(); toast("Indica quién lo declara operativo"); return; }
+    try{ localStorage.setItem("tallercda_nombre", nom); }catch(_){}
+    cerrar(id, fromLocalInput(q.querySelector(".q-fec").value), nom, q.querySelector(".q-not").value.trim());
+    return;
+  }
+  const ro=e.target.closest("[data-reopen]");
+  if(ro){ reabrir(ro.dataset.reopen); return; }
 });
+
+function cerrar(id, fecha, nom, nota){
+  const r=allRecords().find(x=>x.id===id); if(!r) return;
+  const extra={fecha_op:fecha, declarado_por:nom, cerrado_local:true}; if(nota) extra.nota=(r.nota?r.nota+" · ":"")+nota;
+  const n=LOCAL.nuevos.find(x=>x.id===id);
+  if(n) Object.assign(n, extra, {estado:"OP"}); else LOCAL.cierres[id]=extra;
+  saveLocal(); render(); toast(r.equipo+" pasó a Operativos");
+}
+function reabrir(id){
+  const n=LOCAL.nuevos.find(x=>x.id===id);
+  if(n){ n.estado="ABIERTO"; n.fecha_op=""; n.declarado_por=""; delete n.cerrado_local; }
+  delete LOCAL.cierres[id]; saveLocal(); render(); toast("Equipo devuelto a Fuera de servicio");
+}
+document.addEventListener("keydown",e=>{ const q=e.target.closest&&e.target.closest(".quick"); if(!q) return; if(e.key==="Enter") q.querySelector("[data-qok]").click(); if(e.key==="Escape") render(); });
 
 document.getElementById("form1").addEventListener("submit",e=>{
   e.preventDefault(); const f=e.target;
@@ -391,7 +422,7 @@ document.getElementById("form2").addEventListener("submit",e=>{
   const abiertos = allRecords().filter(r=>r.estado!=="OP" && r.equipo.toUpperCase()===code);
   if(abiertos.length){
     abiertos.forEach(r=>{
-      const extra = Object.assign({}, datos, nota?{nota:(r.nota?r.nota+" · ":"")+nota}:{});
+      const extra = Object.assign({cerrado_local:true}, datos, nota?{nota:(r.nota?r.nota+" · ":"")+nota}:{});
       const n=LOCAL.nuevos.find(x=>x.id===r.id);
       if(n) Object.assign(n, extra, {estado:"OP"}); else LOCAL.cierres[r.id]=extra;
       if(pat||teck) LOCAL.ediciones[r.id]=Object.assign(LOCAL.ediciones[r.id]||{}, pat?{patente:pat}:{}, teck?{teck}:{});
@@ -427,7 +458,7 @@ document.querySelector("#form1 [name=clase]").innerHTML = CLASES.map(c=>`<option
 document.querySelector("#form1 [name=fecha_reporte]").value = toLocalInput(new Date());
 document.querySelector("#form2 [name=fecha_op]").value = toLocalInput(new Date());
 render();
-setInterval(render, 60000);
+setInterval(()=>{ if(!document.querySelector(".quick")) render(); }, 60000);
 </script>
 </body>
 </html>
