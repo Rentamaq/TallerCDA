@@ -152,7 +152,7 @@
     <div class="sub" id="sub">—</div>
   </div>
   <div class="actions">
-  <button class="hb-main" onclick="actualizarConClaude()" title="Abre Claude con /tallercda para leer el grupo de WhatsApp y actualizar el panel">⟳ Actualizar</button>
+  <button class="hb-main" onclick="location.reload()" title="Vuelve a cargar la página con los datos más recientes">⟳ Actualizar</button>
   <button onclick="exportCSV()">Exportar CSV</button>
   </div>
 </header>
@@ -576,18 +576,6 @@ document.getElementById("form2").addEventListener("submit",e=>{
   }
   saveLocal(); f.reset(); f.fecha_op.value=toLocalInput(new Date()); render();
 });
-
-/* ---------- Actualizar con el skill tallercda ---------- */
-function actualizarConClaude(){
-  const q = encodeURIComponent("/tallercda");
-  try{ navigator.clipboard && navigator.clipboard.writeText("/tallercda"); }catch(_){}
-  // 1) App de escritorio de Claude (tiene acceso a Chrome y WhatsApp Web)
-  let salio=false; const onBlur=()=>{ salio=true; }; window.addEventListener("blur", onBlur, {once:true});
-  location.href = "claude://claude.ai/new?q="+q;
-  // 2) Si la app no está instalada, abrir Claude en la web
-  setTimeout(()=>{ window.removeEventListener("blur", onBlur); if(!salio && !document.hidden) window.open("https://claude.ai/new?q="+q, "_blank"); }, 1500);
-  toast("Se abre Claude con /tallercda: presiona Enter. Al terminar, recarga esta página (F5).");
-}
 
 /* ---------- Exportar ---------- */
 function download(name, text, type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); }

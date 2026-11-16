@@ -9,7 +9,7 @@ Publicado en https://rentamaq.github.io/TallerCDA/ desde la rama `main` (raíz).
 - `logo-rentamaq.png` – logo corporativo (encabezado y favicon).
 
 ## Botones del encabezado
-- «⟳ Actualizar»: abre Claude (app de escritorio vía `claude://claude.ai/new?q=/tallercda`, o claude.ai en la web si la app no responde) con `/tallercda` escrito y lo copia al portapapeles. René presiona Enter para ejecutar el skill.
+- «⟳ Actualizar»: solo recarga la página (data.js se carga sin caché). No ejecuta el skill; la lectura de WhatsApp se hace con /tallercda.
 - «Exportar CSV». (René pidió quitar «Recargar» y «Descargar data.js»; se recarga con F5.)
 
 ## Pestañas
