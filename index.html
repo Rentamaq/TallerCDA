@@ -76,10 +76,25 @@
   .kpi .val{font-size:30px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
   .kpi .foot{font-size:12px;color:var(--ink-3);margin-top:2px}
   .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
-  .pies{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+  .pies{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
   .pie-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
   .pie-card h3{margin:0 0 2px;font-size:14px;font-weight:650}
-  .pie-card .desc{font-size:12px;color:var(--ink-3);margin-bottom:10px}
+  .pie-card{display:flex;flex-direction:column}
+  .pie-card .desc{font-size:12px;color:var(--ink-2);margin-bottom:6px;line-height:1.4;min-height:34px}
+  .pie-chart{display:flex;justify-content:center;padding:6px 0 2px}
+  .pie-chart svg{overflow:visible}
+  .pie-chart:hover .slice{opacity:.6}.pie-chart .slice:hover{opacity:1}
+  .insight{font-size:13px;background:#fff6ea;border-left:3px solid var(--brand-2);padding:7px 10px;border-radius:0 6px 6px 0;margin:8px 0 10px;color:var(--ink)}
+  .lg{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+  .lg th{font-size:11px;padding:5px 6px;background:transparent;position:static;border-bottom:1px solid var(--line-strong);color:var(--ink-3)}
+  .lg td{padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .lg td:first-child{padding-left:24px;text-indent:-18px;line-height:1.35}
+  .lg .sw{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:7px;vertical-align:-1px;text-indent:0}
+  .lg .n{width:72px;text-align:right;font-weight:650;font-variant-numeric:tabular-nums}
+  .lg .p{width:48px;text-align:right;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .lg tfoot td{font-weight:700;border-bottom:0;border-top:1px solid var(--line-strong)}
+  .lg tbody tr:hover td{background:#faf6ef}
+  .plab{font-size:11px;font-weight:700;fill:#1b1b1b;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
   .pie-body{display:flex;gap:16px;align-items:center}
   .pie-body svg{flex:0 0 200px;overflow:visible}
   .slice.side{filter:brightness(.72)}
@@ -340,16 +355,25 @@ function pieSVG(entries, colors, opts={}){
       tops+=`<path class="slice" d="M${cx},${cy} L${P(s.a0)} A${RX},${RY} 0 ${large} 1 ${P(s.a1)} Z" fill="${s.c}" data-tip="${s.tip}"/>`;
     }
   });
+  let labels="";
+  if(sl.length>1) sl.forEach(s=>{ if(s.f>=0.12){ const m=(s.a0+s.a1)/2; const x=cx+RX*0.62*Math.cos(m), y=cy+RY*0.62*Math.sin(m)+4; labels+=`<text class="plab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle">${Math.round(s.f*100)}%</text>`; } });
   if(sl.length>1){ // bordes de corte visibles en el frente
     sl.forEach(s=>{ [s.a0].forEach(a=>{ if(Math.sin(a)>0.02) walls+=`<path class="edge" d="M${P(a)} L${P(a,D)}"/>`; }); });
   }
-  const sc=opts.scale||1; return `<svg viewBox="0 0 ${W} ${H}" width="${W*sc}" height="${H*sc}" role="img">${shadow}<g>${sides}</g>${walls}<g>${tops}</g><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="url(#shine)" pointer-events="none"/></svg>`;
+  const sc=opts.scale||1; return `<svg viewBox="0 0 ${W} ${H}" width="${W*sc}" height="${H*sc}" role="img">${shadow}<g>${sides}</g>${walls}<g>${tops}</g><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="url(#shine)" pointer-events="none"/>${labels}</svg>`;
 }
-function pieCard(title, desc, entries, colors){
-  colors = colors || COLORS;
+const nice = n => String(n).replace(/^Tel\. ••(\d{4})$/, "Tel. terminado en $1");
+function pieCard(title, desc, entries, colors, unit, insight){
+  colors = colors || COLORS; unit = unit || "Equipos";
   const total = entries.reduce((s,e)=>s+e[1],0);
-  const legend = entries.map((e,i)=>`<li><span class="sw" style="background:${colors[i]}"></span><span class="nm">${esc(e[0])}</span><span class="vl">${e[1]}</span><span class="pc">${total?Math.round(e[1]/total*100):0}%</span></li>`).join("");
-  return `<div class="pie-card"><h3>${esc(title)}</h3><div class="desc">${esc(desc)}</div><div class="pie-body">${pieSVG(entries,colors)}<ul class="legend">${legend}</ul></div></div>`;
+  const rows = entries.map((e,i)=>`<tr data-tip="${esc(nice(e[0]))}: ${e[1]} ${unit.toLowerCase()} (${total?Math.round(e[1]/total*100):0}%)"><td><span class="sw" style="background:${colors[i]}"></span>${esc(nice(e[0]))}</td><td class="n">${e[1]}</td><td class="p">${total?Math.round(e[1]/total*100):0}%</td></tr>`).join("");
+  const ins = insight || (total && entries.length ? (()=>{ const top=[...entries].sort((x,y)=>y[1]-x[1])[0]; return `Mayor: <b>${esc(nice(top[0]))}</b> con ${top[1]} de ${total} (${Math.round(top[1]/total*100)}%).`; })() : "Sin datos en el período.");
+  return `<div class="pie-card">
+    <h3>${esc(title)}</h3><div class="desc">${esc(desc)}</div>
+    <div class="pie-chart">${pieSVG(entries,colors)}</div>
+    <div class="insight">${ins}</div>
+    ${total?`<table class="lg"><thead><tr><th>Categoría</th><th class="n">${esc(unit)}</th><th class="p">%</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td class="n">${total}</td><td class="p">100%</td></tr></tfoot></table>`:""}
+  </div>`;
 }
 const SISTEMAS = [
   ["Embrague", /embrag|embriag/i],
@@ -395,17 +419,23 @@ function renderDashboard(recs, abiertos, ops, now){
     <div class="kpi"><div class="lab">Promedio F/S vigente</div><div class="val">${dur(prom)}</div><div class="foot">${masAntiguo?"más antiguo: "+esc(masAntiguo.equipo)+" ("+dur(hoursBetween(masAntiguo.fecha_reporte,now))+")":"—"}</div></div>
     <div class="kpi"><div class="lab">Tiempo medio de reparación</div><div class="val">${cerradosFS.length?dur(mttr):"—"}</div><div class="foot">${cerradosFS.length} F/S cerrados con hora de ingreso</div></div>`;
 
-  const estado = [["Fuera de servicio",fsAb.length],["Solicita revisión",revAb.length],["Operativo",ops.length]];
-  const antig = [["< 24 h",0],["24 – 48 h",0],["48 – 72 h",0],["> 72 h",0]];
+  const estado = [["Fuera de servicio (detenido)",fsAb.length],["Pendiente de revisión (opera)",revAb.length],["Operativo / reparado",ops.length]];
+  const nEq = estado.reduce((s,e)=>s+e[1],0);
+  const antig = [["Detenido hace menos de 24 h",0],["Entre 24 y 48 h (1 a 2 días)",0],["Entre 48 y 72 h (2 a 3 días)",0],["Más de 72 h (más de 3 días)",0]];
   hrsFS.forEach(h=>{ antig[h<24?0:h<48?1:h<72?2:3][1]++; });
-  const tipos = [["Fuera de servicio",recs.filter(r=>r.tipo==="FS").length],["Solicitud de revisión",recs.filter(r=>r.tipo==="REV").length]];
+  const nFS=recs.filter(r=>r.tipo==="FS").length, nRev=recs.filter(r=>r.tipo==="REV").length;
+  const tipos = [["Equipo fuera de servicio",nFS],["Solicitud de revisión",nRev]];
+  const mas72 = antig[3][1];
   document.getElementById("pies").innerHTML =
-    pieCard("Estado actual de los equipos","Todos los equipos registrados en el período", estado, ["var(--fs)","var(--rev)","var(--op)"]) +
-    pieCard("Equipos detenidos por clase","F/S y revisiones vigentes", foldOther(count(abiertos,"clase"))) +
-    pieCard("Antigüedad de los F/S vigentes","Horas fuera de servicio a la fecha", antig.filter(e=>e[1]>0).length?antig:[], ["var(--s1)","var(--s4)","var(--s2)","var(--s8)"]) +
-    pieCard("Tipo de reporte","Total de reportes del período", tipos, ["var(--fs)","var(--rev)"]) +
-    pieCard("Reportes por persona","Quién reporta las fallas y revisiones", foldOther(count(recs,"reportado_por"))) +
-    pieCard("Operativos declarados por","Quién libera los equipos", foldOther(count(ops,"declarado_por")));
+    pieCard("Estado actual de los equipos","¿Cómo están hoy los equipos reportados en el grupo?", estado, ["var(--fs)","var(--rev)","var(--op)"], "Equipos",
+      nEq?`<b>${fsAb.length+revAb.length} de ${nEq}</b> equipos siguen pendientes; ${ops.length} ya están operativos.`:"") +
+    pieCard("Equipos pendientes por tipo de máquina","Clase de los equipos que hoy están fuera de servicio o esperando revisión.", foldOther(count(abiertos,"clase")), null, "Equipos") +
+    pieCard("Tiempo que llevan fuera de servicio","¿Hace cuánto están detenidos los equipos fuera de servicio vigentes?", antig.filter(e=>e[1]>0).length?antig:[], ["var(--s1)","var(--s4)","var(--s2)","var(--s8)"], "Equipos",
+      fsAb.length?`<b>${mas72} de ${fsAb.length}</b> equipos llevan más de 3 días detenidos.`:"") +
+    pieCard("Tipo de reporte recibido","Reportes del período: equipo detenido o equipo que opera pero pide revisión.", tipos, ["var(--fs)","var(--rev)"], "Reportes",
+      (nFS+nRev)?`<b>${nFS}</b> reportes de equipo detenido y <b>${nRev}</b> solicitudes de revisión.`:"") +
+    pieCard("Quién reporta las fallas","Integrantes del grupo que informan fallas o piden revisión (sin nombre guardado se muestra el teléfono).", foldOther(count(recs,"reportado_por")), null, "Reportes") +
+    pieCard("Quién declara los equipos operativos","Integrantes que informan que un equipo quedó reparado o listo.", foldOther(count(ops,"declarado_por")), null, "Equipos");
 }
 
 /* ---------- Interacción ---------- */
