@@ -3,7 +3,7 @@
 ## OBS-01 · Calidad del reporte y retroalimentación de cierre (24/11/2026)
 
 **Registrada por:** René Luna, Jefe de Operaciones.
-**Estado:** abierta, pendiente de definir la solución.
+**Estado:** en curso. Formato de solicitud definido por René el 24/11/2026 (ver abajo). Falta definir el formato de cierre de mantención.
 
 ### Observación
 El panel funciona bien en general, pero tiene un problema de origen en la información:
@@ -17,10 +17,25 @@ El panel funciona bien en general, pero tiene un problema de origen en la inform
 - Cierres deducidos y no confirmados: EX-31 (mantención del 15/11, cerrada porque el equipo volvió a operar).
 - Operativos informados sin ingreso previo en el grupo: GG-15, REX-18, CMT-132, CA-27, BS-14, EXA-35, CAA-08.
 
+### Formato estándar de solicitud de atención (definido 24/11/2026)
+Desde el 24/11/2026, todo pedido de atención en el grupo debe enviarse así:
+
+```
+Identificación del equipo: Excavadora Komatsu PC200
+Código del equipo: EX-06
+Ubicación:
+Horómetro:
+Operador:
+Observación: (detalle del problema presentado)
+Supervisor a cargo:
+```
+
+- El panel guarda y muestra cada campo (identificación, ubicación, horómetro, operador, supervisor) junto a la falla.
+- Los reportes recibidos desde el 24/11 13:00 que no traigan estos datos se marcan en el panel como «Reporte sin formato estándar», para hacer seguimiento al cumplimiento.
+- El formulario de ingreso manual del panel pide los mismos campos.
+
 ### Ideas de mejora (por evaluar)
-- **Formato estándar de reporte** (plantilla fija o formulario):
-  Equipo (código interno) · Estado (DETENIDO / OPERA CON FALLA) · Falla · Ubicación · Quién reporta.
-  Ejemplo: `F/S EX-14 · Sin luces · Muro oriente central · Javier Moroso`.
+- ~~Formato estándar de reporte~~ → definido (ver arriba). Pendiente evaluar si se agrega un campo «Estado: DETENIDO / OPERA CON FALLA» para distinguir F/S de revisión sin interpretar.
 - **Formato estándar de cierre para mantención**, obligatorio al terminar cada atención:
   `OPERATIVO EX-14 · Trabajo realizado · Hora`.
 - **Formulario web o QR por equipo** que alimente el panel directamente, en lugar del texto libre de WhatsApp.
@@ -29,4 +44,5 @@ El panel funciona bien en general, pero tiene un problema de origen en la inform
 - **Confirmación del solicitante**: que quien reportó valide que el equipo quedó bien.
 
 ### Próximo paso
-Definir con mantención y operaciones el formato de reporte y de cierre, y luego adaptar el panel y el skill `tallercda` a ese formato.
+1. Difundir el formato de solicitud en el grupo «Taller Rentamaq CDA».
+2. Definir con mantención el formato de cierre (operativo) y adaptarlo al panel y al skill `tallercda`.

@@ -122,6 +122,8 @@
   th.sortable::after{content:attr(data-arrow);margin-left:5px;font-size:10px;color:var(--line-strong)}
   th.sortable.on{color:var(--brand-2-dark)}
   th.sortable.on::after{color:var(--brand-2)}
+  .ficha{font-size:12px;color:var(--ink-2);margin-top:3px}
+  .incompleto{display:inline-block;margin-top:4px;font-size:11px;color:#8a5d00;background:#fff4dc;border:1px solid #f3d796;border-radius:999px;padding:1px 7px}
   .quick{display:flex;flex-direction:column;gap:5px;min-width:190px}
   .quick input{padding:5px 7px;border:1px solid var(--line-strong);border-radius:5px;font-size:12px;font-family:inherit}
   .quick input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
@@ -193,13 +195,18 @@
         <label>Tipo
           <select name="tipo"><option value="FS">Fuera de servicio</option><option value="REV">Solicita revisión</option></select>
         </label>
-        <label>Código interno *<input name="equipo" required placeholder="EX-11"></label>
+        <label>Identificación del equipo<input name="descripcion" placeholder="Excavadora Komatsu PC200"></label>
+        <label>Código del equipo *<input name="equipo" required placeholder="EX-06"></label>
         <label>Clase de equipo
           <select name="clase"></select>
         </label>
+        <label>Ubicación<input name="ubicacion" placeholder="Muro oriente central"></label>
+        <label>Horómetro<input name="horometro" inputmode="decimal" placeholder="12345"></label>
+        <label>Operador<input name="operador" placeholder="Nombre del operador"></label>
+        <label>Supervisor a cargo<input name="supervisor" placeholder="Nombre del supervisor"></label>
         <label>Reportado por *<input name="reportado_por" required placeholder="Nombre"></label>
         <label>Fecha y hora de reporte *<input name="fecha_reporte" type="datetime-local" required></label>
-        <label class="wide">Falla / motivo *<textarea name="condicion" required placeholder="Describe la falla o el motivo del ingreso"></textarea></label>
+        <label class="wide">Observación (detalle del problema) *<textarea name="condicion" required placeholder="Describe la falla o el problema presentado"></textarea></label>
         <div><button class="btn" type="submit">Registrar equipo</button></div>
       </form>
       <div class="hint">Los ingresos manuales quedan guardados en este navegador.</div>
@@ -315,7 +322,18 @@ function editCell(r, field){
   const v = r[field];
   return `<span class="edit ${v?"":"empty"}" data-id="${esc(r.id)}" data-f="${field}" title="Clic para editar">${v?esc(v):"+ agregar"}</span>`;
 }
-function matches(r,q){ if(!q) return true; q=q.toLowerCase(); return [r.equipo,r.patente,r.teck,r.condicion,r.reportado_por,r.nota,r.clase,r.declarado_por].join(" ").toLowerCase().includes(q); }
+const FORMATO_DESDE="2026-11-24T13:00:00-03:00"; // desde aquí se exige el formato estándar de reporte
+function ficha(r){
+  const it=[];
+  if(r.descripcion) it.push(esc(r.descripcion));
+  if(r.ubicacion) it.push("📍 "+esc(r.ubicacion));
+  if(r.horometro) it.push("Horómetro "+esc(r.horometro));
+  if(r.operador) it.push("Operador: "+esc(r.operador));
+  if(r.supervisor) it.push("Supervisor: "+esc(r.supervisor));
+  const falt = r.estado!=="OP" && r.fuente!=="Manual" && r.fecha_reporte>=FORMATO_DESDE ? ["ubicacion","horometro","operador","supervisor"].filter(k=>!r[k]) : [];
+  return (it.length?`<div class="ficha">${it.join(" · ")}</div>`:"") + (falt.length===4?`<div class="incompleto" title="El reporte no usó el formato estándar">Reporte sin formato estándar</div>`:"");
+}
+function matches(r,q){ if(!q) return true; q=q.toLowerCase(); return [r.equipo,r.patente,r.teck,r.condicion,r.reportado_por,r.nota,r.clase,r.declarado_por,r.descripcion,r.ubicacion,r.operador,r.supervisor,r.horometro].join(" ").toLowerCase().includes(q); }
 
 function render(){
   const now = new Date();
@@ -342,7 +360,7 @@ function render(){
       <td class="code">${esc(r.equipo)}<div class="muted small">${esc(r.clase||"")}</div></td>
       <td style="white-space:nowrap">${fmt(r.fecha_reporte)}</td>
       <td><span class="hrs ${cls}">${dur(h)}</span></td>
-      <td>${esc(r.condicion)}${r.nota?`<div class="muted small">${esc(r.nota)}</div>`:""}</td>
+      <td>${esc(r.condicion)}${ficha(r)}${r.nota?`<div class="muted small">${esc(r.nota)}</div>`:""}</td>
       <td><button class="btn ok sm" data-close="${esc(r.id)}">Declarar operativo</button></td>
     </tr>`;}).join("") : `<tr><td colspan="7" class="empty-state">Sin equipos para este filtro.</td></tr>`;
 
@@ -360,7 +378,7 @@ function render(){
       <td><span class="hrs" style="color:var(--op)">${dur(desde)}</span></td>
       <td class="muted">${det>0.01?dur(det):"—"}</td>
       <td>${esc(r.declarado_por)}</td>
-      <td>${esc(r.condicion)}${r.nota?`<div class="muted small">${esc(r.nota)}</div>`:""}${r.cerrado_local?`<div><button class="btn ghost sm" style="margin-top:6px" data-reopen="${esc(r.id)}" title="Deshacer: vuelve a Fuera de servicio">↩ Reabrir</button></div>`:""}</td>
+      <td>${esc(r.condicion)}${ficha(r)}${r.nota?`<div class="muted small">${esc(r.nota)}</div>`:""}${r.cerrado_local?`<div><button class="btn ghost sm" style="margin-top:6px" data-reopen="${esc(r.id)}" title="Deshacer: vuelve a Fuera de servicio">↩ Reabrir</button></div>`:""}</td>
     </tr>`;}).join("") : `<tr><td colspan="7" class="empty-state">Aún no hay equipos declarados operativos.</td></tr>`;
 
   document.getElementById("dl-abiertos").innerHTML = abiertos.map(r=>`<option value="${esc(r.equipo)}">${r.tipo==="FS"?"F/S":"Revisión"} · ${esc(r.condicion).slice(0,50)}</option>`).join("");
@@ -552,6 +570,7 @@ document.getElementById("form1").addEventListener("submit",e=>{
   e.preventDefault(); const f=e.target;
   const r = { id:"M"+Date.now(), tipo:f.tipo.value, equipo:f.equipo.value.trim().toUpperCase(), patente:"", teck:"",
     clase:f.clase.value, reportado_por:f.reportado_por.value.trim(), fecha_reporte:fromLocalInput(f.fecha_reporte.value), condicion:f.condicion.value.trim(),
+    descripcion:f.descripcion.value.trim(), ubicacion:f.ubicacion.value.trim(), horometro:f.horometro.value.trim(), operador:f.operador.value.trim(), supervisor:f.supervisor.value.trim(),
     estado:"ABIERTO", fecha_op:"", declarado_por:"", nota:"", fuente:"Manual" };
   LOCAL.nuevos.push(r); saveLocal(); f.reset(); f.fecha_reporte.value=toLocalInput(new Date()); render(); toast("Equipo "+r.equipo+" registrado");
 });
@@ -580,7 +599,7 @@ document.getElementById("form2").addEventListener("submit",e=>{
 /* ---------- Exportar ---------- */
 function download(name, text, type){ const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([text],{type})); a.download=name; document.body.appendChild(a); a.click(); a.remove(); }
 function exportCSV(){
-  const cols=["id","tipo","estado","equipo","clase","reportado_por","fecha_reporte","condicion","fecha_op","declarado_por","nota","fuente"];
+  const cols=["id","tipo","estado","equipo","descripcion","clase","ubicacion","horometro","operador","supervisor","reportado_por","fecha_reporte","condicion","fecha_op","declarado_por","nota","fuente"];
   const rows=allRecords().map(r=>cols.map(c=>'"'+String(r[c]??"").replace(/"/g,'""')+'"').join(";"));
   download("taller_cda.csv","﻿"+cols.join(";")+"\n"+rows.join("\n"),"text/csv");
 }
