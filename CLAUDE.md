@@ -30,7 +30,9 @@ Los ingresos manuales, cierres y reaperturas se guardan en `localStorage` (`tall
   condicion:"falla o motivo", estado:"ABIERTO"|"OP", fecha_op:"", declarado_por:"",
   nota:"", fuente:"WhatsApp"|"Manual",
   // campos del formato estándar de solicitud (desde 24/11/2026; opcionales en registros antiguos)
-  descripcion:"Excavadora Komatsu PC200", ubicacion:"", horometro:"", operador:"", supervisor:"" }
+  descripcion:"Excavadora Komatsu PC200", ubicacion:"", horometro:"", operador:"", supervisor:"",
+  // en cierres leídos desde el 24/11/2026: true si mantención usó el formato de cierre
+  cierre_formato:true|false }
 ```
 Clases válidas: Excavadora, Mini excavadora, Retroexcavadora, Cargador frontal, Camión aljibe, Camión pluma, Camión, Rodillo, Otro.
 Fechas ISO con -03:00 (hora de Chile). Ids nuevos: siguiente correlativo `W0NN`.
@@ -43,6 +45,7 @@ Fechas ISO con -03:00 (hora de Chile). Ids nuevos: siguiente correlativo `W0NN`.
    - **REV**: el equipo opera pero piden revisión (luces, códigos, pértiga, vidrios, pasadores, niveles de aceite…). **También son REV (indicado por René)**: falta de fluidos sin detención («falta refrigerante», «falta aceite») y alertas o alarmas en tablero informadas por el conductor («alerta de batería baja», «arroja código…»). Ejemplos: «Rodillo doble tambor falta refrigerante»; «CAA-04 conductor indica que en tablero arroja alerta de batería baja de contacto, se encuentra en PTOI». La ubicación informada («muro oriente central», «PTOI») va en `nota`.
    - Si el reporte no trae código interno pero identifica el equipo (p. ej. «Rodillo doble tambor»), registrarlo igual usando esa descripción como `equipo` y anotar «Sin código interno en el reporte».
    - **Formato estándar de solicitud (desde 24/11/2026, ver OBSERVACIONES.md)**: los mensajes traen las líneas «Identificación del equipo / Código del equipo / Ubicación / Horómetro / Operador / Observación / Supervisor a cargo». Mapear: Identificación → `descripcion` (y deducir `clase`), Código → `equipo`, Ubicación → `ubicacion`, Horómetro → `horometro` (solo el número), Operador → `operador`, Observación → `condicion`, Supervisor a cargo → `supervisor`. Aceptar variaciones de mayúsculas, tildes, «:» o «-». Si faltan campos, registrar igual con lo que venga; el panel marca como «Reporte sin formato estándar» lo recibido desde el 24/11 13:00 sin ubicación, horómetro, operador ni supervisor. En reportes sin formato, si el texto libre trae ubicación, ponerla en `ubicacion` (no en `nota`).
+   - **Formato estándar de cierre de mantención (desde 24/11/2026)**: «Equipo: Excavadora PC200 / Código: EX-06 / Estado: Operativa» (opcional «Trabajo realizado:»). Estado Operativo/Operativa (o «Operativo con observación») → cerrar el registro ABIERTO de ese código (si hay varios, el que cite el mensaje o el más antiguo de esa falla) y poner `cierre_formato:true`. Estado «Fuera de servicio»/«En taller» → no cierra. Cierres con texto libre desde el 24/11 13:00 → cerrar igual y poner `cierre_formato:false` (el panel muestra «Cierre sin formato estándar»).
    - **Operativo**: «operativo», «quedó operativa», «se despacha operativo», «se realizó lo solicitado», «funcionando bien», «listo» → cerrar el registro abierto de ese equipo (`estado:"OP"`, `fecha_op`, `declarado_por`, nota con el trabajo).
    - No registrar: engrase, relleno de AdBlue, porta número u otros servicios menores; mencionarlos en el resumen.
    - Sin duplicados: reenvíos y recordatorios del mismo problema no son registros nuevos (agregar «reiterado» en la condición). Si un equipo operativo vuelve a fallar, crear un registro nuevo.

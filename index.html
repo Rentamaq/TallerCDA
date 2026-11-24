@@ -331,7 +331,8 @@ function ficha(r){
   if(r.operador) it.push("Operador: "+esc(r.operador));
   if(r.supervisor) it.push("Supervisor: "+esc(r.supervisor));
   const falt = r.estado!=="OP" && r.fuente!=="Manual" && r.fecha_reporte>=FORMATO_DESDE ? ["ubicacion","horometro","operador","supervisor"].filter(k=>!r[k]) : [];
-  return (it.length?`<div class="ficha">${it.join(" · ")}</div>`:"") + (falt.length===4?`<div class="incompleto" title="El reporte no usó el formato estándar">Reporte sin formato estándar</div>`:"");
+  const cierreSin = r.estado==="OP" && r.fuente!=="Manual" && !r.cerrado_local && r.fecha_op>=FORMATO_DESDE && r.cierre_formato===false;
+  return (it.length?`<div class="ficha">${it.join(" · ")}</div>`:"") + (cierreSin?`<div class="incompleto" title="Mantención no informó el cierre con el formato estándar">Cierre sin formato estándar</div>`:"") + (falt.length===4?`<div class="incompleto" title="El reporte no usó el formato estándar">Reporte sin formato estándar</div>`:"");
 }
 function matches(r,q){ if(!q) return true; q=q.toLowerCase(); return [r.equipo,r.patente,r.teck,r.condicion,r.reportado_por,r.nota,r.clase,r.declarado_por,r.descripcion,r.ubicacion,r.operador,r.supervisor,r.horometro].join(" ").toLowerCase().includes(q); }
 

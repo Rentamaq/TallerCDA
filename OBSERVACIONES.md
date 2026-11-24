@@ -3,7 +3,7 @@
 ## OBS-01 · Calidad del reporte y retroalimentación de cierre (24/11/2026)
 
 **Registrada por:** René Luna, Jefe de Operaciones.
-**Estado:** en curso. Formato de solicitud definido por René el 24/11/2026 (ver abajo). Falta definir el formato de cierre de mantención.
+**Estado:** en curso. Formatos de solicitud y de cierre definidos por René el 24/11/2026 (ver abajo). Falta difundirlos y medir su cumplimiento.
 
 ### Observación
 El panel funciona bien en general, pero tiene un problema de origen en la información:
@@ -34,15 +34,28 @@ Supervisor a cargo:
 - Los reportes recibidos desde el 24/11 13:00 que no traigan estos datos se marcan en el panel como «Reporte sin formato estándar», para hacer seguimiento al cumplimiento.
 - El formulario de ingreso manual del panel pide los mismos campos.
 
+### Formato estándar de cierre de mantención (definido 24/11/2026)
+Cuando un equipo queda reparado, mantención debe responder en el mismo grupo de WhatsApp, idealmente citando la solicitud original, así:
+
+```
+Equipo: Excavadora PC200
+Código: EX-06
+Estado: Operativa
+```
+
+- Con este mensaje el panel cierra el registro abierto de ese código y lo pasa a «Operativos».
+- Estados posibles: Operativo/Operativa (cierra el registro). Si se informa «Operativo con observación», también cierra, y la observación queda en el detalle. «Fuera de servicio» o «En taller» no cierra: mantiene o crea el registro F/S.
+- Si se agrega una línea «Trabajo realizado:», se guarda en el detalle del operativo (opcional, recomendado).
+- Los cierres desde el 24/11 13:00 que no usen este formato igual se registran, pero en la pestaña «Operativos» se marcan como «Cierre sin formato estándar».
+
 ### Ideas de mejora (por evaluar)
 - ~~Formato estándar de reporte~~ → definido (ver arriba). Pendiente evaluar si se agrega un campo «Estado: DETENIDO / OPERA CON FALLA» para distinguir F/S de revisión sin interpretar.
-- **Formato estándar de cierre para mantención**, obligatorio al terminar cada atención:
-  `OPERATIVO EX-14 · Trabajo realizado · Hora`.
+- ~~Formato estándar de cierre para mantención~~ → definido (ver arriba).
 - **Formulario web o QR por equipo** que alimente el panel directamente, en lugar del texto libre de WhatsApp.
 - **Alerta de registros sin cierre**: marcar en el panel los equipos con más de X horas sin respuesta de mantención y recordarlos en el grupo o por correo.
 - **Responsable de cierre**: definir quién de mantención confirma cada operativo (hoy lo hace mayoritariamente Juan Olivares).
 - **Confirmación del solicitante**: que quien reportó valide que el equipo quedó bien.
 
 ### Próximo paso
-1. Difundir el formato de solicitud en el grupo «Taller Rentamaq CDA».
-2. Definir con mantención el formato de cierre (operativo) y adaptarlo al panel y al skill `tallercda`.
+1. Difundir en el grupo «Taller Rentamaq CDA» el formato de solicitud (usuarios) y el de cierre (mantención).
+2. Revisar en cada lectura cuántas solicitudes y cierres cumplen el formato, y reforzar con quienes no lo usen.
