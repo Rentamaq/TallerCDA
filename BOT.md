@@ -33,6 +33,15 @@ La página es estática (GitHub Pages): no recibe datos por la URL. El bot debe 
 | `codigo` | Código interno (ej. «EX-06»; la página lo normaliza a mayúsculas con guion) | Sí |
 | `hora_reporte` | Hora en que se recibió el reporte | Sí |
 | `detalle` | Detalle de la falla | Sí |
+| `estado` | `"en taller"` (con falla / F/S) o `"operativo"` (declarado operativo por mantención). Los operativos aparecen en la pestaña «Equipos operativos» | Recomendado |
+| `hora_operativo` | Hora en que mantención lo declaró operativo (si `estado` es `"operativo"`) | Si está operativo |
+| `declarado_por` | Quién lo declaró operativo (nombre, sin teléfono completo) | Opcional |
+| `hora_ultima_respuesta` | Última respuesta de mantención sobre el estado; `null` = sin respuesta (el panel muestra «Sin respuesta») | Recomendado |
+| `ultimo_estado` | Texto de la última respuesta de mantención | Opcional |
+| `proyeccion` | Proyección de atención informada por mantención | Opcional |
+| `consultas` | Cuántas veces el bot consultó a mantención por el equipo | Opcional |
+
+Campos extra que también envía el bot (la página aún no los usa): `patente`, `area`, `usuario`, `respuestas`.
 
 - Fechas: ISO 8601 con zona de Chile (`-03:00`). También acepta `dd/mm/aaaa hh:mm` o solo `hh:mm` en `hora` (se completa con la fecha del reporte).
 - Agregar cada reporte nuevo al final de `reportes` y actualizar `actualizado`. No borrar reportes anteriores: son el historial de los KPI.
