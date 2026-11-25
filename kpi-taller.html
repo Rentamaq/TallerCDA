@@ -117,11 +117,11 @@
   .est-sel.rev{color:#8a5d00;background-color:#fff4dc;border-color:#f3d796}
   .est-sel:focus{outline:2px solid var(--brand-2);outline-offset:1px}
   .est-sel option{color:#111;background:#fff}
-  th.sortable{cursor:pointer;user-select:none}
-  th.sortable:hover{color:var(--ink)}
-  th.sortable::after{content:attr(data-arrow);margin-left:5px;font-size:10px;color:var(--line-strong)}
-  th.sortable.on{color:var(--brand-2-dark)}
-  th.sortable.on::after{color:var(--brand-2)}
+  th.sortable,th.sortable2{cursor:pointer;user-select:none}
+  th.sortable:hover,th.sortable2:hover{color:var(--ink)}
+  th.sortable::after,th.sortable2::after{content:attr(data-arrow);margin-left:5px;font-size:10px;color:var(--line-strong)}
+  th.sortable.on,th.sortable2.on{color:var(--brand-2-dark)}
+  th.sortable.on::after,th.sortable2.on::after{color:var(--brand-2)}
   .ficha{font-size:12px;color:var(--ink-2);margin-top:3px}
   .incompleto{display:inline-block;margin-top:4px;font-size:11px;color:#8a5d00;background:#fff4dc;border:1px solid #f3d796;border-radius:999px;padding:1px 7px}
   .quick{display:flex;flex-direction:column;gap:5px;min-width:190px}
@@ -150,6 +150,9 @@
   .filters .lab{font-size:12px;color:var(--ink-2);font-weight:600}
   .det{max-width:520px}
   .demora{font-size:11px;color:var(--ink-3)}
+  .resp{max-width:300px;font-size:12px;color:var(--ink-2);line-height:1.35}
+  .resp .ult{margin-top:3px;color:var(--ink)}
+  .proy{display:inline-block;margin-top:3px;font-size:11px;color:#2a5aa0;background:#e9f1fc;border:1px solid #c3d8f5;border-radius:999px;padding:1px 7px}
 </style>
 </head>
 <body>
@@ -167,6 +170,7 @@
 </header>
 <nav>
   <button class="active" data-tab="t1">Reportes de fallas <span class="count" id="c1">0</span></button>
+  <button data-tab="t2">Equipos operativos <span class="count" id="c2" style="background:var(--op)">0</span></button>
   <button data-tab="t3">Dashboard KPI</button>
 </nav>
 
@@ -195,12 +199,40 @@
             <th class="sortable" data-k="equipo">Equipo</th>
             <th class="sortable" data-k="codigo">Código de equipo</th>
             <th class="sortable" data-k="hora_reporte">Hora de reporte</th>
+            <th class="sortable" data-k="estado">Estado</th>
+            <th class="sortable" data-k="dias">Días con falla</th>
+            <th class="sortable" data-k="ultima_resp">Respuesta de mantención</th>
             <th class="sortable" data-k="detalle">Detalle de la falla</th>
           </tr></thead>
           <tbody id="tb1"></tbody>
         </table>
       </div>
-      <div class="note-src">«Hora» es cuando ocurrió o se detectó la falla; «Hora de reporte» es cuando se informó. Si el bot solo envía una, se muestra en ambas.</div>
+      <div class="note-src">«Hora» es cuando ocurrió o se detectó la falla; «Hora de reporte» es cuando se informó. Si el bot solo envía una, se muestra en ambas.
+        «Días con falla» cuenta desde el reporte hasta ahora (equipos en taller) o hasta que salió operativo. «Sin respuesta» indica que mantención aún no ha respondido sobre el estado del equipo.</div>
+    </div>
+  </section>
+
+  <!-- ================= PESTAÑA 2: EQUIPOS OPERATIVOS ================= -->
+  <section class="tab" id="t2">
+    <div class="card">
+      <h2>Equipos declarados operativos <small>alimentado por el bot</small></h2>
+      <div class="toolbar"><input type="search" id="fq2" placeholder="Buscar equipo, código, persona, falla…"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th class="sortable2" data-k="codigo">Código de equipo</th>
+            <th class="sortable2" data-k="equipo">Equipo</th>
+            <th class="sortable2" data-k="reportado_por">Quién reportó</th>
+            <th class="sortable2" data-k="hora_reporte">Hora de reporte</th>
+            <th class="sortable2" data-k="hora_op">Declarado operativo</th>
+            <th class="sortable2" data-k="horas_op">Tiempo fuera de servicio</th>
+            <th class="sortable2" data-k="declarado_por">Declarado por</th>
+            <th class="sortable2" data-k="detalle">Falla atendida</th>
+          </tr></thead>
+          <tbody id="tb2"></tbody>
+        </table>
+      </div>
+      <div class="note-src">«Tiempo fuera de servicio» va desde el reporte de la falla hasta que mantención lo declaró operativo. El período filtra por la fecha en que se declaró operativo.</div>
     </div>
   </section>
 
@@ -235,9 +267,29 @@ function norm(r,i){
   const hr = parseFecha(r.hora_reporte||r.fecha_reporte||r.hora, null);
   const h  = parseFecha(r.hora||r.hora_falla||r.hora_reporte, hr);
   const codigo = String(r.codigo||r.codigo_equipo||"").trim().toUpperCase().replace(/\s*-\s*|\s+(?=\d)/g,"-");
+  const op = /operativ|^op$/i.test(String(r.estado||""));
+  const hop = op ? parseFecha(r.hora_operativo||r.fecha_op, null) : null;
+  const ur = parseFecha(r.hora_ultima_respuesta, null);
+  const base = hr||h;
   return { id:r.id||("R"+i), reportado_por:String(r.reportado_por||r.quien_reporto||"Sin nombre").trim(),
-    hora:h, hora_reporte:hr||h, equipo:String(r.equipo||r.identificacion||"").trim(), codigo,
-    detalle:String(r.detalle||r.detalle_falla||r.observacion||"").trim() };
+    hora:h, hora_reporte:base, equipo:String(r.equipo||r.identificacion||"").trim(), codigo,
+    detalle:String(r.detalle||r.detalle_falla||r.observacion||"").trim(),
+    // estado del equipo: "OP" (declarado operativo) o "TALLER" (con falla / F/S)
+    estado: op?"OP":"TALLER", hora_op:hop, declarado_por:String(r.declarado_por||"").trim(),
+    ultima_resp:ur, ultimo_estado:String(r.ultimo_estado||"").trim(), proyeccion:String(r.proyeccion||"").trim(),
+    consultas:+r.consultas||0,
+    horas_op: op&&hop&&base ? Math.max(0,(hop-base)/36e5) : null };
+}
+// Días con la falla: hasta ahora si sigue en taller; hasta que salió operativo si ya salió
+function diasFalla(r, now){ if(!r.hora_reporte) return null; const fin = r.estado==="OP" ? (r.hora_op||now) : now; return Math.max(0,(fin-r.hora_reporte)/864e5); }
+function diasTxt(d){ if(d==null) return "—"; if(d<1) return dur(d*24); const t=d.toFixed(1).replace(".",",").replace(/,0$/,""); return t+(t==="1"?" día":" días"); }
+function diasClase(d){ return d==null?"":d>=7?"h3":d>=3?"h2":d>=1?"h1":""; }
+function enPeriodoT(t, now){
+  if(!t) return PER==="ALL";
+  if(PER==="HOY") return t.toDateString()===now.toDateString();
+  if(PER==="7D") return now-t <= 7*864e5;
+  if(PER==="30D") return now-t <= 30*864e5;
+  return true;
 }
 let PER="ALL";
 function enPeriodo(r, now){
@@ -262,8 +314,13 @@ function clase(r){
 
 /* ---------- Orden de la tabla ---------- */
 const SORT={k:"hora_reporte",d:-1};
-function sv(r,k){ const v=r[k]; return v instanceof Date? v.getTime() : String(v||"").toLowerCase(); }
-function paintSort(){ document.querySelectorAll("th.sortable").forEach(th=>{ const on=SORT.k===th.dataset.k; th.classList.toggle("on",on); th.dataset.arrow=on?(SORT.d===1?"▲":"▼"):"↕"; }); }
+const SORT2={k:"hora_op",d:-1};
+function sv(r,k){ if(k==="dias") return diasFalla(r,new Date())??-1; const v=r[k]; if(typeof v==="number") return v; if(v==null&&/hora|horas|ultima/.test(k)) return -1; return v instanceof Date? v.getTime() : String(v||"").toLowerCase(); }
+function cmp(S){ return (a,b)=>{ const x=sv(a,S.k), y=sv(b,S.k); return (typeof x==="number"&&typeof y==="number"? x-y : String(x).localeCompare(String(y),"es",{numeric:true}))*S.d; }; }
+function paintSort(){
+  document.querySelectorAll("th.sortable").forEach(th=>{ const on=SORT.k===th.dataset.k; th.classList.toggle("on",on); th.dataset.arrow=on?(SORT.d===1?"▲":"▼"):"↕"; });
+  document.querySelectorAll("th.sortable2").forEach(th=>{ const on=SORT2.k===th.dataset.k; th.classList.toggle("on",on); th.dataset.arrow=on?(SORT2.d===1?"▲":"▼"):"↕"; });
+}
 
 /* ---------- KPIs y tortas ---------- */
 function count(arr, key){ const m=new Map(); arr.forEach(r=>{const k=typeof key==="function"?key(r):r[key]; m.set(k,(m.get(k)||0)+1);}); return [...m.entries()].sort((a,b)=>b[1]-a[1]); }
@@ -338,17 +395,47 @@ function render(){
 
   // Tabla
   const q=document.getElementById("fq").value.trim().toLowerCase();
-  const rows=rs.filter(r=>!q||[r.reportado_por,r.equipo,r.codigo,r.detalle].join(" ").toLowerCase().includes(q))
-    .sort((a,b)=>{ const x=sv(a,SORT.k), y=sv(b,SORT.k); return (typeof x==="number"&&typeof y==="number"? x-y : String(x).localeCompare(String(y),"es",{numeric:true}))*SORT.d; });
+  const rows=rs.filter(r=>!q||[r.reportado_por,r.equipo,r.codigo,r.detalle,r.ultimo_estado].join(" ").toLowerCase().includes(q))
+    .sort(cmp(SORT));
   document.getElementById("tb1").innerHTML = rows.length ? rows.map(r=>{
     const dem = r.hora && r.hora_reporte ? (r.hora_reporte-r.hora)/36e5 : 0;
+    const d = diasFalla(r, now);
+    const est = r.estado==="OP"
+      ? `<span class="badge op">Operativo</span><div class="demora">${fmt(r.hora_op)}</div>`
+      : `<span class="badge fs">En taller / F/S</span>`;
+    let resp;
+    if(r.estado==="OP") resp = `<div class="resp">Declarado operativo${r.declarado_por?` por <b>${esc(r.declarado_por)}</b>`:""}</div>`;
+    else if(!r.ultima_resp) resp = `<span class="badge fs">Sin respuesta</span><div class="demora">${diasTxt(d)} sin respuesta de mantención${r.consultas?` · ${r.consultas} consulta${r.consultas>1?"s":""} del bot`:""}</div>`;
+    else { const hace=(now-r.ultima_resp)/864e5;
+      resp = `<div class="resp">Última respuesta ${fmt(r.ultima_resp)} <span class="muted">(hace ${diasTxt(hace)})</span>`+
+        (r.ultimo_estado?`<div class="ult">«${esc(r.ultimo_estado.length>140?r.ultimo_estado.slice(0,140)+"…":r.ultimo_estado)}»</div>`:"")+
+        (r.proyeccion?`<span class="proy">Proyección: ${esc(r.proyeccion)}</span>`:"")+`</div>`; }
     return `<tr><td>${esc(r.reportado_por)}</td>
       <td style="white-space:nowrap">${fmt(r.hora)}</td>
       <td>${esc(r.equipo||"—")}<div class="muted small">${clase(r)}</div></td>
       <td class="code">${esc(r.codigo||"—")}</td>
       <td style="white-space:nowrap">${fmt(r.hora_reporte)}${dem>0.01?`<div class="demora">${dur(dem)} después</div>`:""}</td>
+      <td>${est}</td>
+      <td><span class="hrs ${r.estado==="OP"?"":diasClase(d)}">${diasTxt(d)}</span>${r.estado==="OP"?`<div class="demora">hasta quedar operativo</div>`:""}</td>
+      <td>${resp}</td>
       <td class="det">${esc(r.detalle||"—")}</td></tr>`; }).join("")
-    : `<tr><td colspan="6" class="empty-state">${all.length?"Sin reportes para este filtro.":"Aún no hay reportes. El bot los irá cargando aquí."}</td></tr>`;
+    : `<tr><td colspan="9" class="empty-state">${all.length?"Sin reportes para este filtro.":"Aún no hay reportes. El bot los irá cargando aquí."}</td></tr>`;
+
+  // Pestaña "Equipos operativos" (el período filtra por la fecha en que se declaró operativo)
+  const ops=all.filter(r=>r.estado==="OP"&&enPeriodoT(r.hora_op||r.hora_reporte, now));
+  document.getElementById("c2").textContent=ops.length;
+  const q2=document.getElementById("fq2").value.trim().toLowerCase();
+  const rows2=ops.filter(r=>!q2||[r.reportado_por,r.equipo,r.codigo,r.detalle,r.declarado_por].join(" ").toLowerCase().includes(q2)).sort(cmp(SORT2));
+  document.getElementById("tb2").innerHTML = rows2.length ? rows2.map(r=>`<tr>
+      <td class="code">${esc(r.codigo||"—")}</td>
+      <td>${esc(r.equipo||"—")}<div class="muted small">${clase(r)}</div></td>
+      <td>${esc(r.reportado_por)}</td>
+      <td style="white-space:nowrap">${fmt(r.hora_reporte)}</td>
+      <td style="white-space:nowrap"><span class="badge op">Operativo</span><div class="demora">${fmt(r.hora_op)}</div></td>
+      <td><span class="hrs">${r.horas_op!=null?dur(r.horas_op):"—"}</span></td>
+      <td>${esc(r.declarado_por||"—")}</td>
+      <td class="det">${esc(r.detalle||"—")}${r.ultimo_estado?`<div class="ficha">Último estado: ${esc(r.ultimo_estado.length>140?r.ultimo_estado.slice(0,140)+"…":r.ultimo_estado)}</div>`:""}</td></tr>`).join("")
+    : `<tr><td colspan="8" class="empty-state">${all.some(r=>r.estado==="OP")?"Sin equipos operativos para este filtro.":"Aún no hay equipos declarados operativos. Aparecerán aquí cuando mantención responda que quedaron operativos."}</td></tr>`;
   paintSort();
 
   // KPIs
@@ -357,12 +444,19 @@ function render(){
   const dems=rs.filter(r=>r.hora&&r.hora_reporte&&r.hora_reporte>r.hora).map(r=>(r.hora_reporte-r.hora)/36e5);
   const prom=dems.length?dems.reduce((a,b)=>a+b,0)/dems.length:null;
   const top=eqs[0];
+  // Tiempo en salir operativo (equipos declarados operativos en el período)
+  const tOp=ops.filter(r=>r.horas_op!=null).map(r=>r.horas_op);
+  const promOp=tOp.length?tOp.reduce((a,b)=>a+b,0)/tOp.length:null;
+  const enTaller=all.filter(r=>r.estado==="TALLER");
+  const sinResp=enTaller.filter(r=>!r.ultima_resp).length;
   const k=`
     <div class="kpi"><div class="lab">Reportes de fallas</div><div class="val">${rs.length}</div><div class="foot">${per}</div></div>
     <div class="kpi"><div class="lab">Reportes de hoy</div><div class="val">${hoy}</div><div class="foot">${now.toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"})}</div></div>
     <div class="kpi"><div class="lab">Equipos con fallas</div><div class="val">${eqs.length}</div><div class="foot">códigos distintos</div></div>
     <div class="kpi"><div class="lab">Equipo con más fallas</div><div class="val">${top?esc(top[0]):"—"}</div><div class="foot">${top?top[1]+" reporte"+(top[1]>1?"s":""):"sin datos"}</div></div>
-    <div class="kpi"><div class="lab">Demora promedio en reportar</div><div class="val">${prom!=null?dur(prom):"—"}</div><div class="foot">entre la hora de la falla y el reporte</div></div>`;
+    <div class="kpi"><div class="lab">Demora promedio en reportar</div><div class="val">${prom!=null?dur(prom):"—"}</div><div class="foot">entre la hora de la falla y el reporte</div></div>
+    <div class="kpi"><div class="lab"><span class="dot" style="background:var(--fs)"></span>En taller ahora</div><div class="val">${enTaller.length}</div><div class="foot">${sinResp} sin respuesta de mantención</div></div>
+    <div class="kpi"><div class="lab"><span class="dot" style="background:var(--op)"></span>Promedio en salir operativo</div><div class="val">${promOp!=null?dur(promOp):"—"}</div><div class="foot">${tOp.length?tOp.length+" equipo"+(tOp.length>1?"s":"")+" operativo"+(tOp.length>1?"s":"")+" · "+per:"aún sin equipos operativos"}</div></div>`;
   document.getElementById("kpis").innerHTML=k; document.getElementById("kpis1").innerHTML=k;
 
   // Tortas 3D
@@ -373,7 +467,14 @@ function render(){
   const demB=[["Menos de 15 min",0],["15 a 60 min",0],["1 a 4 h",0],["Más de 4 h",0]];
   dems.forEach(h=>{ demB[h<0.25?0:h<1?1:h<4?2:3][1]++; });
   const top1=sisE[0];
-  document.getElementById("pies").innerHTML = rs.length ? (
+  const opB=[["Menos de 4 h",0],["4 a 24 h",0],["1 a 3 días",0],["Más de 3 días",0]];
+  tOp.forEach(h=>{ opB[h<4?0:h<24?1:h<72?2:3][1]++; });
+  const masLento=[...ops].filter(r=>r.horas_op!=null).sort((a,b)=>b.horas_op-a.horas_op)[0];
+  const pieOp = pieCard("Tiempo en salir operativo","Tiempo desde el reporte de la falla hasta que mantención declaró el equipo operativo.",
+    opB.filter(e=>e[1]).length?opB:[], ["var(--s6)","var(--s1)","var(--s4)","var(--s8)"], "Equipos",
+    promOp!=null?`Promedio en salir operativo: <b>${dur(promOp)}</b> (${tOp.length} equipo${tOp.length>1?"s":""}).`+(masLento?` Más demorado: <b>${esc(masLento.codigo)}</b> con ${dur(masLento.horas_op)}.`:"")
+      :"Aún no hay equipos declarados operativos en el período.");
+  document.getElementById("pies").innerHTML = rs.length||ops.length ? (pieOp +
     pieCard("Fallas por sistema","¿Qué tipo de falla se reporta más? Clasificación automática según el detalle de la falla.", foldOther(sisE,7), null, "Fallas",
       top1?`Lo más reportado: <b>${esc(top1[0])}</b> con ${top1[1]} falla${top1[1]>1?"s":""}.`:"") +
     pieCard("Fallas por tipo de equipo","Clase de máquina de los equipos reportados.", foldOther(count(rs,clase)), null, "Reportes") +
@@ -392,10 +493,12 @@ document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
 });
 document.querySelectorAll("#fper button").forEach(b=>b.onclick=()=>{ PER=b.dataset.v; document.querySelectorAll("#fper button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
 document.getElementById("fq").oninput=render;
-document.querySelectorAll("th.sortable").forEach(th=>th.addEventListener("click",()=>{ if(SORT.k===th.dataset.k) SORT.d=-SORT.d; else { SORT.k=th.dataset.k; SORT.d=/hora/.test(SORT.k)?-1:1; } render(); }));
+document.getElementById("fq2").oninput=render;
+document.querySelectorAll("th.sortable").forEach(th=>th.addEventListener("click",()=>{ if(SORT.k===th.dataset.k) SORT.d=-SORT.d; else { SORT.k=th.dataset.k; SORT.d=/hora|dias|ultima/.test(SORT.k)?-1:1; } render(); }));
+document.querySelectorAll("th.sortable2").forEach(th=>th.addEventListener("click",()=>{ if(SORT2.k===th.dataset.k) SORT2.d=-SORT2.d; else { SORT2.k=th.dataset.k; SORT2.d=/hora|horas/.test(SORT2.k)?-1:1; } render(); }));
 function exportCSV(){
-  const cols=["reportado_por","hora","equipo","codigo","hora_reporte","detalle"];
-  const rows=(DATA.reportes||[]).map(norm).map(r=>cols.map(c=>{ const v=r[c] instanceof Date? r[c].toLocaleString("es-CL") : (r[c]??""); return '"'+String(v).replace(/"/g,'""')+'"'; }).join(";"));
+  const cols=["reportado_por","hora","equipo","codigo","hora_reporte","estado","hora_op","declarado_por","horas_op","ultima_resp","detalle"];
+  const rows=(DATA.reportes||[]).map(norm).map(r=>cols.map(c=>{ let v=r[c] instanceof Date? r[c].toLocaleString("es-CL") : (r[c]??""); if(c==="estado") v=v==="OP"?"Operativo":"En taller"; if(c==="horas_op"&&v!=="") v=String((+v).toFixed(1)).replace(".",","); return '"'+String(v).replace(/"/g,'""')+'"'; }).join(";"));
   const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob(["\ufeff"+cols.join(";")+"\n"+rows.join("\n")],{type:"text/csv"})); a.download="kpi_taller.csv"; document.body.appendChild(a); a.click(); a.remove();
 }
 const tip=document.getElementById("tip");
