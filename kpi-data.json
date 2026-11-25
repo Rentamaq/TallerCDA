@@ -1,4 +1,37 @@
 {
-  "actualizado": null,
-  "reportes": []
+  "actualizado": "2026-11-25T20:50:34-03:00",
+  "reportes": [
+    {
+      "id": "BOT-20261125-002",
+      "reportado_por": "Supervisor Concentradora",
+      "hora": "2026-11-25T16:56:09-03:00",
+      "equipo": "Cargador Frontal Komatsu WA-320-6",
+      "codigo": "C-28",
+      "hora_reporte": "2026-11-25T16:56:09-03:00",
+      "detalle": "Cardan completamente suelto",
+      "patente": "TKBP-15",
+      "area": "Planta concentradora",
+      "usuario": "Danilo codoceo",
+      "estado": "en taller",
+      "hora_operativo": null,
+      "proyeccion": "jueves, 26 nov, 04:00 p. m.",
+      "ultimo_estado": "Se espera contar mañana con crucetas nuevas para el cardán, las cuales deben ser reemplazadas. Actualmente, el proveedor Komatsu no cuenta con disponibilidad, por lo que se están buscando alternativas de abastecimiento local. La proyección es dejar el equipo operativo durante la tarde de mañana."
+    },
+    {
+      "id": "BOT-20261125-001",
+      "reportado_por": "Integrante del grupo",
+      "hora": "2026-11-25T17:18:08-03:00",
+      "equipo": "Camion Aljibe Renault C440",
+      "codigo": "CAA-04",
+      "hora_reporte": "2026-11-25T17:18:08-03:00",
+      "detalle": "Caa 04 se dirigirá a taller el neumatico sigue en las mismas condiciones",
+      "patente": "TZWS- 81",
+      "area": "Depósito de relaves",
+      "usuario": "Integrante del grupo",
+      "estado": "en taller",
+      "hora_operativo": null,
+      "proyeccion": "",
+      "ultimo_estado": ""
+    }
+  ]
 }
