@@ -7,6 +7,9 @@ Publicado en https://rentamaq.github.io/TallerCDA/ desde la rama `main` (raíz).
 - `index.html` – todo el panel (HTML + CSS + JS, sin dependencias externas).
 - `data.js` – `window.TALLER_DATA = { actualizado, ultima_lectura, periodo, registros: [...] }`. `ultima_lectura` marca hasta dónde se leyó el grupo (lo usa el skill `tallercda`). Es lo único que cambia en cada lectura del grupo.
 - `logo-rentamaq.png` – logo corporativo (encabezado y favicon).
+- `kpi-taller.html` – segunda página «KPI Taller» (https://rentamaq.github.io/TallerCDA/kpi-taller.html): pestaña «Reportes de fallas» (Quién reportó, Hora, Equipo, Código de equipo, Hora de reporte, Detalle de la falla; ordenable, buscador, filtro de período) y pestaña «Dashboard KPI» con KPIs y 6 tortas 3D (fallas por sistema, por tipo de equipo, equipos con más fallas, quién reporta, horario, demora en reportar). Enlazada desde el encabezado de `index.html` y viceversa.
+- `kpi-data.json` – datos de KPI Taller, los escribe el **bot** de René vía API de GitHub (ver `BOT.md`). `{ actualizado, reportes:[{id, reportado_por, hora, equipo, codigo, hora_reporte, detalle}] }`. No editar a mano salvo pedido de René.
+- `BOT.md` – instrucciones para conectar el bot (formato del JSON y escritura con la API de GitHub).
 - `OBSERVACIONES.md` – observaciones de René y mejoras pendientes del sistema. Leerlo antes de proponer cambios. OBS-01: los reportes por WhatsApp no traen la información necesaria y mantención no confirma los cierres.
 
 ## Botones del encabezado

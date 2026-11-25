@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI Taller · Rentamaq CDA</title>
+<link rel="icon" href="logo-rentamaq.png">
+<style>
+  :root{
+    --bg:#f4f3f0; --surface:#fcfcfb; --line:#e3e1dc; --line-strong:#cfccc5;
+    --ink:#0b0b0b; --ink-2:#52514e; --ink-3:#7d7b76;
+    --brand:#2b2b2b; --brand-2:#e88305; --brand-gray:#636363; --brand-2-dark:#c46d00;
+    --fs:#e34948; --rev:#eda100; --op:#008300;
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#6250d6; --s8:#e34948;
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+  header{background:var(--brand);border-top:4px solid var(--brand-2);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  header .logo{background:#fdfdfd;border-radius:8px;padding:6px 10px;display:flex;align-items:center}
+  header .logo img{height:30px;width:auto;display:block}
+  header h1{font-size:18px;margin:0;font-weight:650}
+  header .sub{font-size:12px;opacity:.75;margin-top:2px}
+  header .ttl{flex:1;min-width:280px}
+  header .actions{display:flex;gap:8px;flex-wrap:wrap}
+  header button.hb-main{background:var(--brand-2);border-color:var(--brand-2);font-weight:650}
+  header button.hb-main:hover{background:var(--brand-2-dark)}
+  header button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:13px}
+  header button:hover{background:rgba(255,255,255,.1)}
+  nav{display:flex;gap:4px;padding:0 22px;background:var(--brand);border-top:1px solid rgba(255,255,255,.08)}
+  nav button{background:none;border:0;color:rgba(255,255,255,.7);padding:12px 16px;font-size:14px;cursor:pointer;border-bottom:3px solid transparent;font-weight:550}
+  nav button.active{color:#fff;border-bottom-color:var(--brand-2)}
+  nav .count{display:inline-block;min-width:20px;padding:1px 6px;margin-left:6px;border-radius:10px;background:var(--brand-2);color:#fff;font-size:12px}
+  main{padding:20px 22px 40px;max-width:1500px;margin:0 auto}
+  .tab{display:none}.tab.active{display:block}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;margin-bottom:18px}
+  .card h2{font-size:15px;margin:0 0 12px;font-weight:650;padding-left:10px;border-left:4px solid var(--brand-2)}
+  .card h2 small{font-weight:400;color:var(--ink-3);font-size:12px;margin-left:6px}
+  .toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .toolbar input[type=search],.toolbar select{padding:7px 10px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;background:#fff}
+  .seg{display:inline-flex;border:1px solid var(--line-strong);border-radius:7px;overflow:hidden}
+  .seg button{border:0;background:#fff;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--ink-2)}
+  .seg button+button{border-left:1px solid var(--line-strong)}
+  .seg button.on{background:var(--brand-2);color:#fff}
+  .table-wrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-weight:600;color:var(--brand-gray);font-size:12px;text-transform:uppercase;letter-spacing:.02em;padding:9px 10px;border-bottom:1px solid var(--line-strong);white-space:nowrap;background:#f8f7f4;position:sticky;top:0}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:hover td{background:#faf9f6}
+  .code{font-weight:700;white-space:nowrap}
+  .muted{color:var(--ink-3)}
+  .small{font-size:12px}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;border:1px solid}
+  .badge.fs{color:#b3201f;background:#fdeceb;border-color:#f6c3c2}
+  .badge.rev{color:#8a5d00;background:#fff4dc;border-color:#f3d796}
+  .badge.op{color:#065f06;background:#e6f4e6;border-color:#b7dcb7}
+  .badge.man{color:#2a5aa0;background:#e9f1fc;border-color:#c3d8f5}
+  .hrs{font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .hrs.h1{color:#8a5d00}.hrs.h2{color:#c2410c}.hrs.h3{color:#b3201f}
+  .edit{cursor:pointer;border-bottom:1px dashed var(--line-strong);min-width:60px;display:inline-block}
+  .edit.empty{color:var(--ink-3)}
+  .edit input{width:110px;padding:3px 5px;font-size:13px;border:1px solid var(--brand-2);border-radius:4px}
+  .btn{background:var(--brand-2);color:#fff;border:0;padding:8px 14px;border-radius:7px;font-size:13px;cursor:pointer;font-weight:550}
+  .btn.ok{background:var(--op)}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line-strong)}
+  .btn.sm{padding:4px 9px;font-size:12px}
+  .btn:hover{filter:brightness(1.08)}
+  form.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px 14px;align-items:end}
+  form.grid label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink-2);font-weight:550}
+  form.grid input:focus,form.grid select:focus,form.grid textarea:focus,.toolbar input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
+  form.grid input,form.grid select,form.grid textarea{padding:8px 9px;border:1px solid var(--line-strong);border-radius:7px;font-size:13px;font-family:inherit;background:#fff}
+  form.grid .wide{grid-column:1/-1}
+  form.grid textarea{min-height:56px;resize:vertical}
+  .hint{font-size:12px;color:var(--ink-3);margin-top:8px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:18px}
+  .kpi{border-top:3px solid var(--brand-gray)!important;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+  .kpi .lab{font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+  .kpi .val{font-size:30px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+  .kpi .foot{font-size:12px;color:var(--ink-3);margin-top:2px}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+  .pies{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px}
+  .pie-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+  .pie-card h3{margin:0 0 2px;font-size:14px;font-weight:650}
+  .pie-card{display:flex;flex-direction:column}
+  .pie-card .desc{font-size:12px;color:var(--ink-2);margin-bottom:6px;line-height:1.4;min-height:34px}
+  .pie-chart{display:flex;justify-content:center;padding:6px 0 2px}
+  .pie-chart svg{overflow:visible}
+  .pie-chart:hover .slice{opacity:.6}.pie-chart .slice:hover{opacity:1}
+  .insight{font-size:13px;background:#fff6ea;border-left:3px solid var(--brand-2);padding:7px 10px;border-radius:0 6px 6px 0;margin:8px 0 10px;color:var(--ink)}
+  .lg{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+  .lg th{font-size:11px;padding:5px 6px;background:transparent;position:static;border-bottom:1px solid var(--line-strong);color:var(--ink-3)}
+  .lg td{padding:6px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .lg td:first-child{padding-left:24px;text-indent:-18px;line-height:1.35}
+  .lg .sw{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:7px;vertical-align:-1px;text-indent:0}
+  .lg .n{width:72px;text-align:right;font-weight:650;font-variant-numeric:tabular-nums}
+  .lg .p{width:48px;text-align:right;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .lg tfoot td{font-weight:700;border-bottom:0;border-top:1px solid var(--line-strong)}
+  .lg tbody tr:hover td{background:#faf6ef}
+  .plab{font-size:11px;font-weight:700;fill:#1b1b1b;paint-order:stroke;stroke:#fff;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
+  .pie-body{display:flex;gap:16px;align-items:center}
+  .pie-body svg{flex:0 0 200px;overflow:visible}
+  .slice.side{filter:brightness(.72)}
+  .edge{stroke:rgba(255,255,255,.9);stroke-width:2}
+  .legend{list-style:none;margin:0;padding:0;flex:1;font-size:13px}
+  .legend li{display:flex;align-items:center;gap:8px;padding:4px 0;border-bottom:1px solid var(--line)}
+  .legend li:last-child{border-bottom:0}
+  .legend .sw{width:11px;height:11px;border-radius:3px;flex:0 0 11px}
+  .legend .nm{flex:1;color:var(--ink)}
+  .legend .vl{font-variant-numeric:tabular-nums;font-weight:600}
+  .legend .pc{font-variant-numeric:tabular-nums;color:var(--ink-3);width:42px;text-align:right}
+  .slice{stroke:var(--surface);stroke-width:1.5;stroke-linejoin:round;cursor:default;transition:opacity .15s}
+  .pie-body svg:hover .slice{opacity:.6}.pie-body svg .slice:hover{opacity:1}
+  #tip{position:fixed;pointer-events:none;background:#1d1d1b;color:#fff;font-size:12px;padding:6px 9px;border-radius:6px;display:none;z-index:50;max-width:260px}
+  .empty-state{padding:24px;text-align:center;color:var(--ink-3)}
+  .est-sel{appearance:none;-webkit-appearance:none;border:1px solid;border-radius:999px;padding:3px 24px 3px 9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background-repeat:no-repeat;background-position:right 8px center;background-size:8px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23555'/%3E%3C/svg%3E")}
+  .est-sel.fs{color:#b3201f;background-color:#fdeceb;border-color:#f6c3c2}
+  .est-sel.rev{color:#8a5d00;background-color:#fff4dc;border-color:#f3d796}
+  .est-sel:focus{outline:2px solid var(--brand-2);outline-offset:1px}
+  .est-sel option{color:#111;background:#fff}
+  th.sortable{cursor:pointer;user-select:none}
+  th.sortable:hover{color:var(--ink)}
+  th.sortable::after{content:attr(data-arrow);margin-left:5px;font-size:10px;color:var(--line-strong)}
+  th.sortable.on{color:var(--brand-2-dark)}
+  th.sortable.on::after{color:var(--brand-2)}
+  .ficha{font-size:12px;color:var(--ink-2);margin-top:3px}
+  .incompleto{display:inline-block;margin-top:4px;font-size:11px;color:#8a5d00;background:#fff4dc;border:1px solid #f3d796;border-radius:999px;padding:1px 7px}
+  .quick{display:flex;flex-direction:column;gap:5px;min-width:190px}
+  .quick input{padding:5px 7px;border:1px solid var(--line-strong);border-radius:5px;font-size:12px;font-family:inherit}
+  .quick input:focus{outline:2px solid var(--brand-2);outline-offset:-1px}
+  .q-btns{display:flex;gap:5px}
+  .av-body{display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+  .av-body svg{flex:0 0 auto;overflow:visible}
+  .av-body:hover .slice{opacity:.6}.av-body .slice:hover{opacity:1}
+  .av-legend{min-width:320px;columns:2;column-gap:28px}
+  .av-legend li{break-inside:avoid}
+  @media (max-width:900px){.av-legend{columns:1}}
+  .bars{display:grid;grid-template-columns:minmax(150px,230px) 1fr 40px;gap:9px 12px;align-items:center}
+  .bars .bl{font-size:13px;color:var(--ink);text-align:right}
+  .bars .bt{height:20px;background:#efeee9;border-radius:0 4px 4px 0;position:relative}
+  .bars .bf{height:100%;background:var(--brand-2);border-radius:0 4px 4px 0;min-width:3px;transition:filter .15s}
+  .bars .row:hover .bf,.bars .bf:hover{filter:brightness(.9)}
+  .bars .bv{font-weight:700;font-variant-numeric:tabular-nums}
+  .bars .be{font-size:11px;color:var(--ink-3);margin-top:2px;text-align:right}
+  .toast{position:fixed;bottom:20px;right:20px;background:#1d1d1b;color:#fff;padding:10px 14px;border-radius:8px;font-size:13px;display:none;z-index:60}
+  .note-src{font-size:12px;color:var(--ink-3);margin-top:6px}
+  @media (max-width:700px){ .pie-body{flex-direction:column} main{padding:14px} }
+  header a.hb-link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:7px 12px;border-radius:7px;font-size:13px}
+  header a.hb-link:hover{background:rgba(255,255,255,.1)}
+  .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+  .filters .lab{font-size:12px;color:var(--ink-2);font-weight:600}
+  .det{max-width:520px}
+  .demora{font-size:11px;color:var(--ink-3)}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><img src="logo-rentamaq.png" alt="RentaMaq"></div>
+  <div class="ttl">
+    <h1>KPI Taller · Rentamaq CDA</h1>
+    <div class="sub" id="sub">—</div>
+  </div>
+  <div class="actions">
+    <button class="hb-main" onclick="location.reload()" title="Vuelve a cargar la página con los datos más recientes">⟳ Actualizar</button>
+    <button onclick="exportCSV()">Exportar CSV</button>
+    <a class="hb-link" href="./" title="Ir al panel de estado de equipos">Estado de equipos →</a>
+  </div>
+</header>
+<nav>
+  <button class="active" data-tab="t1">Reportes de fallas <span class="count" id="c1">0</span></button>
+  <button data-tab="t3">Dashboard KPI</button>
+</nav>
+
+<main>
+  <div class="filters">
+    <span class="lab">Período:</span>
+    <div class="seg" id="fper">
+      <button data-v="HOY">Hoy</button>
+      <button data-v="7D">Últimos 7 días</button>
+      <button data-v="30D">Últimos 30 días</button>
+      <button class="on" data-v="ALL">Todo</button>
+    </div>
+  </div>
+
+  <!-- ================= PESTAÑA 1: PANEL ================= -->
+  <section class="tab active" id="t1">
+    <div class="kpis" id="kpis1"></div>
+    <div class="card">
+      <h2>Reportes de fallas recibidos <small>alimentado por el bot</small></h2>
+      <div class="toolbar"><input type="search" id="fq" placeholder="Buscar persona, equipo, código, falla…"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>
+            <th class="sortable" data-k="reportado_por">Quién reportó</th>
+            <th class="sortable" data-k="hora">Hora</th>
+            <th class="sortable" data-k="equipo">Equipo</th>
+            <th class="sortable" data-k="codigo">Código de equipo</th>
+            <th class="sortable" data-k="hora_reporte">Hora de reporte</th>
+            <th class="sortable" data-k="detalle">Detalle de la falla</th>
+          </tr></thead>
+          <tbody id="tb1"></tbody>
+        </table>
+      </div>
+      <div class="note-src">«Hora» es cuando ocurrió o se detectó la falla; «Hora de reporte» es cuando se informó. Si el bot solo envía una, se muestra en ambas.</div>
+    </div>
+  </section>
+
+  <!-- ================= PESTAÑA 2: DASHBOARD ================= -->
+  <section class="tab" id="t3">
+    <div class="kpis" id="kpis"></div>
+    <div class="pies" id="pies"></div>
+  </section>
+</main>
+<svg width="0" height="0" style="position:absolute"><defs><radialGradient id="shine" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient></defs></svg>
+<div id="tip"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const COLORS = ["var(--s1)","var(--s2)","var(--s3)","var(--s4)","var(--s5)","var(--s6)","var(--s7)","var(--s8)"];
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = d => { if(!d||isNaN(d)) return "—"; return d.toLocaleDateString("es-CL",{day:"2-digit",month:"2-digit"})+" "+d.toLocaleTimeString("es-CL",{hour:"2-digit",minute:"2-digit"}); };
+function dur(h){ if(h<1) return Math.round(h*60)+" min"; if(h<48) return h.toFixed(1).replace(".",",")+" h"; const t=Math.round(h); const d=Math.floor(t/24); return d+" d "+(t-d*24)+" h"; }
+
+/* ---------- Datos ---------- */
+let DATA={actualizado:null, reportes:[]};
+// Fecha flexible: ISO completo, "dd/mm/aaaa hh:mm", o solo "hh:mm" (se completa con la fecha de referencia)
+function parseFecha(v, ref){
+  if(!v) return null; v=String(v).trim();
+  let m=v.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})[ T,]+(\d{1,2}):(\d{2})/);
+  if(m){ const y=m[3].length===2?2000+ +m[3]:+m[3]; return new Date(y, m[2]-1, +m[1], +m[4], +m[5]); }
+  m=v.match(/^(\d{1,2}):(\d{2})(?::\d{2})?$/);
+  if(m){ const b=ref?new Date(ref):new Date(); b.setHours(+m[1], +m[2], 0, 0); return b; }
+  const d=new Date(v); return isNaN(d)?null:d;
+}
+function norm(r,i){
+  const hr = parseFecha(r.hora_reporte||r.fecha_reporte||r.hora, null);
+  const h  = parseFecha(r.hora||r.hora_falla||r.hora_reporte, hr);
+  const codigo = String(r.codigo||r.codigo_equipo||"").trim().toUpperCase().replace(/\s*-\s*|\s+(?=\d)/g,"-");
+  return { id:r.id||("R"+i), reportado_por:String(r.reportado_por||r.quien_reporto||"Sin nombre").trim(),
+    hora:h, hora_reporte:hr||h, equipo:String(r.equipo||r.identificacion||"").trim(), codigo,
+    detalle:String(r.detalle||r.detalle_falla||r.observacion||"").trim() };
+}
+let PER="ALL";
+function enPeriodo(r, now){
+  const t=r.hora_reporte; if(!t) return PER==="ALL";
+  if(PER==="HOY") return t.toDateString()===now.toDateString();
+  if(PER==="7D") return now-t <= 7*864e5;
+  if(PER==="30D") return now-t <= 30*864e5;
+  return true;
+}
+function clase(r){
+  const t=(r.equipo+" "+r.codigo).toLowerCase(), c=r.codigo;
+  if(/retro|^rexa?-/i.test(t)||/^REXA?-/.test(c)) return "Retroexcavadora";
+  if(/mini|^exa-/.test(t)||/^EXA-/.test(c)) return "Mini excavadora";
+  if(/excavadora/.test(t)||/^EX-/.test(c)) return "Excavadora";
+  if(/cargador/.test(t)||/^(CF|CFA|C)-/.test(c)) return "Cargador frontal";
+  if(/aljibe/.test(t)||/^CA-/.test(c)) return "Camión aljibe";
+  if(/pluma/.test(t)||/^CP-/.test(c)) return "Camión pluma";
+  if(/cami[oó]n|camioneta|tolva/.test(t)||/^(CT|CMT)-/.test(c)) return "Camión";
+  if(/rodillo/.test(t)||/^RD-/.test(c)) return "Rodillo";
+  return "Otro";
+}
+
+/* ---------- Orden de la tabla ---------- */
+const SORT={k:"hora_reporte",d:-1};
+function sv(r,k){ const v=r[k]; return v instanceof Date? v.getTime() : String(v||"").toLowerCase(); }
+function paintSort(){ document.querySelectorAll("th.sortable").forEach(th=>{ const on=SORT.k===th.dataset.k; th.classList.toggle("on",on); th.dataset.arrow=on?(SORT.d===1?"▲":"▼"):"↕"; }); }
+
+/* ---------- KPIs y tortas ---------- */
+function count(arr, key){ const m=new Map(); arr.forEach(r=>{const k=typeof key==="function"?key(r):r[key]; m.set(k,(m.get(k)||0)+1);}); return [...m.entries()].sort((a,b)=>b[1]-a[1]); }
+function foldOther(entries, max=6){ if(entries.length<=max) return entries; const head=entries.slice(0,max-1); const rest=entries.slice(max-1).reduce((s,e)=>s+e[1],0); return head.concat([["Otros",rest]]); }
+function pieSVG(entries, colors, opts={}){
+  // Torta 3D: elipse inclinada con espesor. Las cifras exactas van en la leyenda.
+  const total = entries.reduce((s,e)=>s+e[1],0);
+  const W=200, H=150, cx=100, cy=62, RX=92, RY=54, D=20;
+  const P=(a,dy=0)=>`${(cx+RX*Math.cos(a)).toFixed(2)},${(cy+dy+RY*Math.sin(a)).toFixed(2)}`;
+  const shadow=`<ellipse cx="${cx}" cy="${cy+D+6}" rx="${RX}" ry="${RY*0.8}" fill="rgba(0,0,0,.10)"/>`;
+  if(!total) return `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">${shadow}<ellipse cx="${cx}" cy="${cy+D}" rx="${RX}" ry="${RY}" fill="#dcdad4"/><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="#eeede9"/><text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="12" fill="#7d7b76">Sin datos</text></svg>`;
+  const sl=[]; let a0=-Math.PI/2;
+  entries.forEach((e,i)=>{ const f=e[1]/total; const a1=a0+f*2*Math.PI; if(e[1]>0) sl.push({a0,a1,f,c:colors[i],tip:`${esc(e[0])}: ${e[1]} (${Math.round(f*100)}%)`+(opts.tips&&opts.tips[i]?'<br>'+opts.tips[i]:'')}); a0=a1; });
+  let sides="", tops="", walls="";
+  sl.forEach(s=>{
+    // pared exterior: solo la parte frontal (ángulos entre 0 y π)
+    const s0=Math.max(s.a0,0), s1=Math.min(s.a1,Math.PI);
+    if(s1>s0){
+      const large=(s1-s0)>Math.PI?1:0;
+      sides+=`<path class="slice side" d="M${P(s0)} A${RX},${RY} 0 ${large} 1 ${P(s1)} L${P(s1,D)} A${RX},${RY} 0 ${large} 0 ${P(s0,D)} Z" fill="${s.c}" data-tip="${s.tip}"/>`;
+    }
+    if(s.f>=0.9999){ tops+=`<ellipse class="slice" cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="${s.c}" data-tip="${s.tip}"/>`; }
+    else{
+      const large=(s.a1-s.a0)>Math.PI?1:0;
+      tops+=`<path class="slice" d="M${cx},${cy} L${P(s.a0)} A${RX},${RY} 0 ${large} 1 ${P(s.a1)} Z" fill="${s.c}" data-tip="${s.tip}"/>`;
+    }
+  });
+  let labels="";
+  if(sl.length>1) sl.forEach(s=>{ if(s.f>=0.12){ const m=(s.a0+s.a1)/2; const x=cx+RX*0.62*Math.cos(m), y=cy+RY*0.62*Math.sin(m)+4; labels+=`<text class="plab" x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle">${Math.round(s.f*100)}%</text>`; } });
+  if(sl.length>1){ // bordes de corte visibles en el frente
+    sl.forEach(s=>{ [s.a0].forEach(a=>{ if(Math.sin(a)>0.02) walls+=`<path class="edge" d="M${P(a)} L${P(a,D)}"/>`; }); });
+  }
+  const sc=opts.scale||1; return `<svg viewBox="0 0 ${W} ${H}" width="${W*sc}" height="${H*sc}" role="img">${shadow}<g>${sides}</g>${walls}<g>${tops}</g><ellipse cx="${cx}" cy="${cy}" rx="${RX}" ry="${RY}" fill="url(#shine)" pointer-events="none"/>${labels}</svg>`;
+}
+const nice = n => String(n).replace(/^Tel\. ••(\d{4})$/, "Tel. terminado en $1");
+function pieCard(title, desc, entries, colors, unit, insight){
+  colors = colors || COLORS; unit = unit || "Equipos";
+  const total = entries.reduce((s,e)=>s+e[1],0);
+  const rows = entries.map((e,i)=>`<tr data-tip="${esc(nice(e[0]))}: ${e[1]} ${unit.toLowerCase()} (${total?Math.round(e[1]/total*100):0}%)"><td><span class="sw" style="background:${colors[i]}"></span>${esc(nice(e[0]))}</td><td class="n">${e[1]}</td><td class="p">${total?Math.round(e[1]/total*100):0}%</td></tr>`).join("");
+  const ins = insight || (total && entries.length ? (()=>{ const top=[...entries].sort((x,y)=>y[1]-x[1])[0]; return `Mayor: <b>${esc(nice(top[0]))}</b> con ${top[1]} de ${total} (${Math.round(top[1]/total*100)}%).`; })() : "Sin datos en el período.");
+  return `<div class="pie-card">
+    <h3>${esc(title)}</h3><div class="desc">${esc(desc)}</div>
+    <div class="pie-chart">${pieSVG(entries,colors)}</div>
+    <div class="insight">${ins}</div>
+    ${total?`<table class="lg"><thead><tr><th>Categoría</th><th class="n">${esc(unit)}</th><th class="p">%</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td class="n">${total}</td><td class="p">100%</td></tr></tfoot></table>`:""}
+  </div>`;
+}
+const SISTEMAS = [
+  ["Embrague", /embrag|embriag/i],
+  ["Luces y señalización (focos, baliza, pértiga)", /luz|luces|foco|baliza|p[eé]rtiga/i],
+  ["Sistema eléctrico (batería, alternador)", /bater[ií]a|alternador|el[eé]ctric/i],
+  ["Aceite / refrigerante (niveles y fugas)", /aceite|refrigerante|fluido|lubric/i],
+  ["Neumáticos", /neum[aá]tico|pinchad/i],
+  ["Vidrios, puertas y cabina", /vidrio|parabrisas|trizadura|puerta|aire acondicionado|cabina/i],
+  ["Códigos y alarmas de motor / filtros", /c[oó]digo|alarma|filtro/i],
+  ["Sistema de regadío", /regader|regad[ií]o/i],
+  ["Pasadores y estructura", /pasador|calza|soldad|estructura/i],
+  ["Seguridad (extintor, parada de emergencia)", /extintor|parada de emergencia/i],
+  ["Mantención programada", /mantenci[oó]n programada/i],
+  ["Revisión técnica", /revisi[oó]n t[eé]cnica/i]
+];
+
+function sistema(txt){ const hit=SISTEMAS.filter(([,re])=>re.test(txt)).map(([n])=>n); return hit.length?hit:["Otros / sin clasificar"]; }
+
+function render(){
+  const now=new Date();
+  const all=(DATA.reportes||[]).map(norm);
+  const rs=all.filter(r=>enPeriodo(r,now));
+  const per={HOY:"hoy",["7D"]:"últimos 7 días",["30D"]:"últimos 30 días",ALL:"todo el período"}[PER];
+  document.getElementById("sub").textContent = (DATA.actualizado?"Actualizado "+fmt(new Date(DATA.actualizado))+" · ":"")+all.length+" reportes cargados por el bot";
+  document.getElementById("c1").textContent=rs.length;
+
+  // Tabla
+  const q=document.getElementById("fq").value.trim().toLowerCase();
+  const rows=rs.filter(r=>!q||[r.reportado_por,r.equipo,r.codigo,r.detalle].join(" ").toLowerCase().includes(q))
+    .sort((a,b)=>{ const x=sv(a,SORT.k), y=sv(b,SORT.k); return (typeof x==="number"&&typeof y==="number"? x-y : String(x).localeCompare(String(y),"es",{numeric:true}))*SORT.d; });
+  document.getElementById("tb1").innerHTML = rows.length ? rows.map(r=>{
+    const dem = r.hora && r.hora_reporte ? (r.hora_reporte-r.hora)/36e5 : 0;
+    return `<tr><td>${esc(r.reportado_por)}</td>
+      <td style="white-space:nowrap">${fmt(r.hora)}</td>
+      <td>${esc(r.equipo||"—")}<div class="muted small">${clase(r)}</div></td>
+      <td class="code">${esc(r.codigo||"—")}</td>
+      <td style="white-space:nowrap">${fmt(r.hora_reporte)}${dem>0.01?`<div class="demora">${dur(dem)} después</div>`:""}</td>
+      <td class="det">${esc(r.detalle||"—")}</td></tr>`; }).join("")
+    : `<tr><td colspan="6" class="empty-state">${all.length?"Sin reportes para este filtro.":"Aún no hay reportes. El bot los irá cargando aquí."}</td></tr>`;
+  paintSort();
+
+  // KPIs
+  const hoy=all.filter(r=>r.hora_reporte && r.hora_reporte.toDateString()===now.toDateString()).length;
+  const eqs=count(rs,"codigo").filter(e=>e[0]);
+  const dems=rs.filter(r=>r.hora&&r.hora_reporte&&r.hora_reporte>r.hora).map(r=>(r.hora_reporte-r.hora)/36e5);
+  const prom=dems.length?dems.reduce((a,b)=>a+b,0)/dems.length:null;
+  const top=eqs[0];
+  const k=`
+    <div class="kpi"><div class="lab">Reportes de fallas</div><div class="val">${rs.length}</div><div class="foot">${per}</div></div>
+    <div class="kpi"><div class="lab">Reportes de hoy</div><div class="val">${hoy}</div><div class="foot">${now.toLocaleDateString("es-CL",{weekday:"long",day:"numeric",month:"long"})}</div></div>
+    <div class="kpi"><div class="lab">Equipos con fallas</div><div class="val">${eqs.length}</div><div class="foot">códigos distintos</div></div>
+    <div class="kpi"><div class="lab">Equipo con más fallas</div><div class="val">${top?esc(top[0]):"—"}</div><div class="foot">${top?top[1]+" reporte"+(top[1]>1?"s":""):"sin datos"}</div></div>
+    <div class="kpi"><div class="lab">Demora promedio en reportar</div><div class="val">${prom!=null?dur(prom):"—"}</div><div class="foot">entre la hora de la falla y el reporte</div></div>`;
+  document.getElementById("kpis").innerHTML=k; document.getElementById("kpis1").innerHTML=k;
+
+  // Tortas 3D
+  const sis=new Map(); rs.forEach(r=>sistema(r.detalle).forEach(n=>sis.set(n,(sis.get(n)||0)+1)));
+  const sisE=[...sis.entries()].sort((a,b)=>b[1]-a[1]);
+  const franja=[["Mañana (06–12 h)",0],["Tarde (12–18 h)",0],["Noche (18–24 h)",0],["Madrugada (00–06 h)",0]];
+  rs.forEach(r=>{ const h=(r.hora||r.hora_reporte); if(!h) return; const x=h.getHours(); franja[x<6?3:x<12?0:x<18?1:2][1]++; });
+  const demB=[["Menos de 15 min",0],["15 a 60 min",0],["1 a 4 h",0],["Más de 4 h",0]];
+  dems.forEach(h=>{ demB[h<0.25?0:h<1?1:h<4?2:3][1]++; });
+  const top1=sisE[0];
+  document.getElementById("pies").innerHTML = rs.length ? (
+    pieCard("Fallas por sistema","¿Qué tipo de falla se reporta más? Clasificación automática según el detalle de la falla.", foldOther(sisE,7), null, "Fallas",
+      top1?`Lo más reportado: <b>${esc(top1[0])}</b> con ${top1[1]} falla${top1[1]>1?"s":""}.`:"") +
+    pieCard("Fallas por tipo de equipo","Clase de máquina de los equipos reportados.", foldOther(count(rs,clase)), null, "Reportes") +
+    pieCard("Equipos con más fallas","Códigos de equipo con más reportes en el período.", foldOther(eqs,6), null, "Reportes") +
+    pieCard("Quién reporta","Personas que informan las fallas al bot.", foldOther(count(rs,"reportado_por")), null, "Reportes") +
+    pieCard("Horario de las fallas","Franja del día en que ocurren o se detectan las fallas.", franja.filter(e=>e[1]).length?franja:[], ["var(--s4)","var(--s2)","var(--s7)","var(--s1)"], "Reportes") +
+    pieCard("Demora en reportar","Tiempo entre la hora de la falla y la hora del reporte.", demB.filter(e=>e[1]).length?demB:[], ["var(--s6)","var(--s1)","var(--s4)","var(--s8)"], "Reportes",
+      dems.length?`<b>${demB[3][1]} de ${dems.length}</b> fallas se reportaron con más de 4 h de demora.`:"Sin datos de demora: el bot no envió hora de falla distinta a la de reporte.")
+  ) : `<div class="card empty-state">Sin reportes para el período seleccionado.</div>`;
+}
+
+/* ---------- Interacción ---------- */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x===b));
+  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("active",t.id===b.dataset.tab));
+});
+document.querySelectorAll("#fper button").forEach(b=>b.onclick=()=>{ PER=b.dataset.v; document.querySelectorAll("#fper button").forEach(x=>x.classList.toggle("on",x===b)); render(); });
+document.getElementById("fq").oninput=render;
+document.querySelectorAll("th.sortable").forEach(th=>th.addEventListener("click",()=>{ if(SORT.k===th.dataset.k) SORT.d=-SORT.d; else { SORT.k=th.dataset.k; SORT.d=/hora/.test(SORT.k)?-1:1; } render(); }));
+function exportCSV(){
+  const cols=["reportado_por","hora","equipo","codigo","hora_reporte","detalle"];
+  const rows=(DATA.reportes||[]).map(norm).map(r=>cols.map(c=>{ const v=r[c] instanceof Date? r[c].toLocaleString("es-CL") : (r[c]??""); return '"'+String(v).replace(/"/g,'""')+'"'; }).join(";"));
+  const a=document.createElement("a"); a.href=URL.createObjectURL(new Blob(["\ufeff"+cols.join(";")+"\n"+rows.join("\n")],{type:"text/csv"})); a.download="kpi_taller.csv"; document.body.appendChild(a); a.click(); a.remove();
+}
+const tip=document.getElementById("tip");
+document.addEventListener("mousemove",e=>{ const s=e.target.closest("[data-tip]"); if(s){ tip.innerHTML=s.getAttribute("data-tip"); tip.style.display="block"; tip.style.left=(e.clientX+12)+"px"; tip.style.top=(e.clientY+12)+"px"; } else tip.style.display="none"; });
+
+/* ---------- Carga (sin caché) ---------- */
+fetch("kpi-data.json?v="+Date.now(),{cache:"no-store"}).then(r=>r.ok?r.json():Promise.reject(r.status))
+  .then(d=>{ DATA=Array.isArray(d)?{reportes:d}:d; render(); })
+  .catch(()=>{ render(); document.getElementById("sub").textContent="No se pudo leer kpi-data.json"; });
+setInterval(render,60000);
+</script>
+</body>
+</html>

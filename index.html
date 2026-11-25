@@ -22,7 +22,9 @@
   header h1{font-size:18px;margin:0;font-weight:650}
   header .sub{font-size:12px;opacity:.75;margin-top:2px}
   header .ttl{flex:1;min-width:280px}
-  header .actions{display:flex;gap:8px;flex-wrap:wrap}
+  header .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  header a.hb-link{color:#fff;text-decoration:none;border:1px solid rgba(255,255,255,.35);padding:7px 12px;border-radius:7px;font-size:13px}
+  header a.hb-link:hover{background:rgba(255,255,255,.1)}
   header button.hb-main{background:var(--brand-2);border-color:var(--brand-2);font-weight:650}
   header button.hb-main:hover{background:var(--brand-2-dark)}
   header button{background:transparent;border:1px solid rgba(255,255,255,.35);color:#fff;padding:7px 12px;border-radius:7px;cursor:pointer;font-size:13px}
@@ -156,6 +158,7 @@
   <div class="actions">
   <button class="hb-main" onclick="location.reload()" title="Vuelve a cargar la página con los datos más recientes">⟳ Actualizar</button>
   <button onclick="exportCSV()">Exportar CSV</button>
+  <a class="hb-link" href="kpi-taller.html" title="Ir a la página KPI Taller">KPI Taller →</a>
   </div>
 </header>
 <nav>
