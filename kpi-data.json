@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-26T07:11:00-03:00",
+  "actualizado": "2026-11-26T08:26:59-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -35,11 +35,11 @@
       "estado": "en taller",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": null,
-      "respuestas": 0,
+      "hora_ultima_respuesta": "2026-11-26T08:14:59-03:00",
+      "respuestas": 1,
       "consultas": 6,
       "proyeccion": "",
-      "ultimo_estado": ""
+      "ultimo_estado": "Caa-04 se reemplazará neumático durante el día."
     }
   ]
 }
