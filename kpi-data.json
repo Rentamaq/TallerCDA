@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-26T20:21:42-03:00",
+  "actualizado": "2026-11-26T20:43:02-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -60,6 +60,46 @@
       "consultas": 0,
       "proyeccion": "",
       "ultimo_estado": "Técnicos informan que quedó operativo"
+    },
+    {
+      "id": "BOT-20261126-004",
+      "reportado_por": "samuel Aguilera",
+      "hora": "2026-11-26T16:47:00-03:00",
+      "equipo": "Camioneta",
+      "codigo": "CMT-132",
+      "hora_reporte": "2026-11-26T16:47:00-03:00",
+      "detalle": "rotura línea de combustible.",
+      "patente": "TTRC-29",
+      "area": "muro sur",
+      "usuario": "Samuel aguilera",
+      "estado": "en taller",
+      "hora_operativo": null,
+      "declarado_por": "",
+      "hora_ultima_respuesta": "2026-11-26T17:20:00-03:00",
+      "respuestas": 1,
+      "consultas": 0,
+      "proyeccion": "",
+      "ultimo_estado": "Equipo técnico se dirige al lugar"
+    },
+    {
+      "id": "BOT-20261126-005",
+      "reportado_por": "Johan Contreras",
+      "hora": "2026-11-26T16:53:00-03:00",
+      "equipo": "Excavadora John Deere 210P",
+      "codigo": "EXA-41",
+      "hora_reporte": "2026-11-26T16:53:00-03:00",
+      "detalle": "Se solicita engrase, ya que hay pasado tiempo y ya se nota seca",
+      "patente": "N/A",
+      "area": "Dewatering (muro norte, camino a muro poniente)",
+      "usuario": "Johan Contreras",
+      "estado": "en taller",
+      "hora_operativo": null,
+      "declarado_por": "",
+      "hora_ultima_respuesta": "2026-11-26T17:21:00-03:00",
+      "respuestas": 1,
+      "consultas": 0,
+      "proyeccion": "mañana (27/11), lubricadores fuera de horario",
+      "ultimo_estado": "Buenas tardes Yohan. Quedará programado para mañana, ya que lubricadores están fuera por horario."
     }
   ]
 }
