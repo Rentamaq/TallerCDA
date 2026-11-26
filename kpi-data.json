@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-25T20:53:07-03:00",
+  "actualizado": "2026-11-25T21:00:19-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -14,6 +14,10 @@
       "usuario": "Danilo codoceo",
       "estado": "en taller",
       "hora_operativo": null,
+      "declarado_por": "",
+      "hora_ultima_respuesta": "2026-11-25T19:18:00-03:00",
+      "respuestas": 1,
+      "consultas": 2,
       "proyeccion": "jueves, 26 nov, 04:00 p. m.",
       "ultimo_estado": "Se espera contar mañana con crucetas nuevas para el cardán, las cuales deben ser reemplazadas. Actualmente, el proveedor Komatsu no cuenta con disponibilidad, por lo que se están buscando alternativas de abastecimiento local. La proyección es dejar el equipo operativo durante la tarde de mañana."
     },
@@ -30,6 +34,10 @@
       "usuario": "Integrante del grupo",
       "estado": "en taller",
       "hora_operativo": null,
+      "declarado_por": "",
+      "hora_ultima_respuesta": null,
+      "respuestas": 0,
+      "consultas": 5,
       "proyeccion": "",
       "ultimo_estado": ""
     }
