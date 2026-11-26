@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-26T12:01:12-03:00",
+  "actualizado": "2026-11-26T12:02:33-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -40,6 +40,26 @@
       "consultas": 7,
       "proyeccion": "viernes, 27 nov, 12:00 p. m.",
       "ultimo_estado": "Proyección de de atención de 1 día!!"
+    },
+    {
+      "id": "BOT-20261126-003",
+      "reportado_por": "samuel Aguilera",
+      "hora": "2026-11-26T10:17:00-03:00",
+      "equipo": "Excavadora Komatsu Komatsu PC210LC-11E0",
+      "codigo": "EXA-37",
+      "hora_reporte": "2026-11-26T10:17:00-03:00",
+      "detalle": "testigo en pantalla  detener motor y asistencia al equipo.",
+      "patente": "N/A",
+      "area": "dren muro sur",
+      "usuario": "Pedro arancibia",
+      "estado": "operativo",
+      "hora_operativo": "2026-11-26T10:31:00-03:00",
+      "declarado_por": "Rodrigo Ivan",
+      "hora_ultima_respuesta": "2026-11-26T10:31:00-03:00",
+      "respuestas": 1,
+      "consultas": 0,
+      "proyeccion": "",
+      "ultimo_estado": "Técnicos informan que quedó operativo"
     }
   ]
 }
