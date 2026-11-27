@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T10:52:59-03:00",
+  "actualizado": "2026-11-27T11:07:59-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -155,11 +155,11 @@
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": null,
-      "respuestas": 0,
+      "hora_ultima_respuesta": "2026-11-27T11:05:31-03:00",
+      "respuestas": 1,
       "consultas": 0,
       "proyeccion": "",
-      "ultimo_estado": ""
+      "ultimo_estado": "Agregar también cuñas por favor"
     }
   ]
 }
