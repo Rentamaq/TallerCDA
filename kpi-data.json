@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T14:31:51-03:00",
+  "actualizado": "2026-11-27T14:36:51-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -95,11 +95,11 @@
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-26T17:21:00-03:00",
-      "respuestas": 1,
+      "hora_ultima_respuesta": "2026-11-27T14:35:33-03:00",
+      "respuestas": 2,
       "consultas": 3,
       "proyeccion": "mañana (27/11), lubricadores fuera de horario",
-      "ultimo_estado": "Buenas tardes Yohan. Quedará programado para mañana, ya que lubricadores están fuera por horario."
+      "ultimo_estado": "Está ok el equipo 👍🏽"
     },
     {
       "id": "BOT-20261127-006",
