@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T09:54:28-03:00",
+  "actualizado": "2026-11-27T10:04:14-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -112,6 +112,26 @@
       "patente": "KWKH-79",
       "area": "Planta 24k",
       "usuario": "Jonathan González",
+      "estado": "fuera de servicio",
+      "hora_operativo": null,
+      "declarado_por": "",
+      "hora_ultima_respuesta": null,
+      "respuestas": 0,
+      "consultas": 0,
+      "proyeccion": "",
+      "ultimo_estado": ""
+    },
+    {
+      "id": "BOT-20261127-007",
+      "reportado_por": "Supervisor A. Mina",
+      "hora": "2026-11-27T10:02:14-03:00",
+      "equipo": "Excavadora Komatsu PC450LC",
+      "codigo": "EXA-30",
+      "hora_reporte": "2026-11-27T10:02:14-03:00",
+      "detalle": "la solicitud: Equipo sigue presentando fuga hidráulica q estaba en observación por favor su asistencia",
+      "patente": "TJGG-15",
+      "area": "fase 7b",
+      "usuario": "Juan adones",
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
