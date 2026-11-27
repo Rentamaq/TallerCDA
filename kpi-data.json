@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T11:22:59-03:00",
+  "actualizado": "2026-11-27T13:55:04-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -37,7 +37,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-26T08:59:38-03:00",
       "respuestas": 2,
-      "consultas": 7,
+      "consultas": 8,
       "proyeccion": "viernes, 27 nov, 12:00 p. m.",
       "ultimo_estado": "Proyección de de atención de 1 día!!"
     },
@@ -77,7 +77,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-27T09:36:00-03:00",
       "respuestas": 3,
-      "consultas": 2,
+      "consultas": 3,
       "proyeccion": "2 h",
       "ultimo_estado": "En 2 horas más será atendido equipo. Se están realizando otras prioridades."
     },
@@ -97,7 +97,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-26T17:21:00-03:00",
       "respuestas": 1,
-      "consultas": 0,
+      "consultas": 1,
       "proyeccion": "mañana (27/11), lubricadores fuera de horario",
       "ultimo_estado": "Buenas tardes Yohan. Quedará programado para mañana, ya que lubricadores están fuera por horario."
     },
@@ -117,7 +117,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-27T10:44:36-03:00",
       "respuestas": 1,
-      "consultas": 1,
+      "consultas": 2,
       "proyeccion": "2 h",
       "ultimo_estado": "Equipo de revisará en 2 horas."
     },
@@ -157,7 +157,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-27T11:05:31-03:00",
       "respuestas": 1,
-      "consultas": 1,
+      "consultas": 2,
       "proyeccion": "",
       "ultimo_estado": "Agregar también cuñas por favor"
     }
