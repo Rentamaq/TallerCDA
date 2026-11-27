@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T16:11:51-03:00",
+  "actualizado": "2026-11-27T16:16:51-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -75,11 +75,11 @@
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-27T09:36:00-03:00",
-      "respuestas": 3,
+      "hora_ultima_respuesta": "2026-11-27T16:15:08-03:00",
+      "respuestas": 4,
       "consultas": 12,
       "proyeccion": "2 h",
-      "ultimo_estado": "En 2 horas más será atendido equipo. Se están realizando otras prioridades."
+      "ultimo_estado": "FUERA DE SERVICIO!"
     },
     {
       "id": "BOT-20261126-005",
@@ -92,11 +92,11 @@
       "patente": "N/A",
       "area": "Dewatering (muro norte, camino a muro poniente)",
       "usuario": "Johan Contreras",
-      "estado": "fuera de servicio",
-      "hora_operativo": null,
-      "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-27T14:35:33-03:00",
-      "respuestas": 2,
+      "estado": "operativo",
+      "hora_operativo": "2026-11-27T16:15:36-03:00",
+      "declarado_por": "Rodrigo Ivan",
+      "hora_ultima_respuesta": "2026-11-27T16:15:36-03:00",
+      "respuestas": 3,
       "consultas": 9,
       "proyeccion": "mañana (27/11), lubricadores fuera de horario",
       "ultimo_estado": "Está ok el equipo 👍🏽"
@@ -112,12 +112,12 @@
       "patente": "KWKH-79",
       "area": "Planta 24k",
       "usuario": "Jonathan González",
-      "estado": "fuera de servicio",
-      "hora_operativo": null,
-      "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-27T14:13:06-03:00",
-      "respuestas": 3,
-      "consultas": 11,
+      "estado": "operativo",
+      "hora_operativo": "2026-11-27T16:15:24-03:00",
+      "declarado_por": "Rodrigo Ivan",
+      "hora_ultima_respuesta": "2026-11-27T16:15:24-03:00",
+      "respuestas": 4,
+      "consultas": 12,
       "proyeccion": "2 h",
       "ultimo_estado": "Buenas tardes ambos requerimientos informa el operador"
     },
@@ -135,11 +135,11 @@
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-27T10:45:42-03:00",
-      "respuestas": 1,
-      "consultas": 6,
-      "proyeccion": "4 h",
-      "ultimo_estado": "Equipo se revisará en 4 horas."
+      "hora_ultima_respuesta": "2026-11-27T16:16:34-03:00",
+      "respuestas": 2,
+      "consultas": 7,
+      "proyeccion": "sábado, 28 nov, 12:00 p. m.",
+      "ultimo_estado": "Proyección de atención 1 dia"
     },
     {
       "id": "BOT-20261127-008",
@@ -152,11 +152,11 @@
       "patente": "TKBP-15",
       "area": "Trinchera",
       "usuario": "Jimmy rojas",
-      "estado": "fuera de servicio",
-      "hora_operativo": null,
-      "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-27T11:05:31-03:00",
-      "respuestas": 1,
+      "estado": "operativo",
+      "hora_operativo": "2026-11-27T16:14:47-03:00",
+      "declarado_por": "Rodrigo Ivan",
+      "hora_ultima_respuesta": "2026-11-27T16:14:47-03:00",
+      "respuestas": 2,
       "consultas": 11,
       "proyeccion": "",
       "ultimo_estado": "Agregar también cuñas por favor"
