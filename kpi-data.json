@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T13:55:04-03:00",
+  "actualizado": "2026-11-27T14:00:03-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -115,11 +115,11 @@
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-27T10:44:36-03:00",
-      "respuestas": 1,
-      "consultas": 2,
+      "hora_ultima_respuesta": "2026-11-27T13:14:05-03:00",
+      "respuestas": 2,
+      "consultas": 3,
       "proyeccion": "2 h",
-      "ultimo_estado": "Equipo de revisará en 2 horas."
+      "ultimo_estado": "Buenas tardes. Se realizó chequeo de equipo por lo solicitado. Se programará para reparación de lo solicitado y el tensado de oruga no se pudo realizar por la ubicación del equipo."
     },
     {
       "id": "BOT-20261127-007",
