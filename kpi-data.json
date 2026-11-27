@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T10:38:14-03:00",
+  "actualizado": "2026-11-27T10:47:59-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -115,11 +115,11 @@
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": null,
-      "respuestas": 0,
+      "hora_ultima_respuesta": "2026-11-27T10:44:36-03:00",
+      "respuestas": 1,
       "consultas": 1,
-      "proyeccion": "",
-      "ultimo_estado": ""
+      "proyeccion": "2 h",
+      "ultimo_estado": "Equipo de revisará en 2 horas."
     },
     {
       "id": "BOT-20261127-007",
@@ -135,11 +135,11 @@
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": null,
-      "respuestas": 0,
+      "hora_ultima_respuesta": "2026-11-27T10:45:42-03:00",
+      "respuestas": 1,
       "consultas": 0,
-      "proyeccion": "",
-      "ultimo_estado": ""
+      "proyeccion": "4 h",
+      "ultimo_estado": "Equipo se revisará en 4 horas."
     }
   ]
 }
