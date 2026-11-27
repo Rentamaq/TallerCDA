@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T14:46:51-03:00",
+  "actualizado": "2026-11-27T14:51:51-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -97,7 +97,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-27T14:35:33-03:00",
       "respuestas": 2,
-      "consultas": 3,
+      "consultas": 4,
       "proyeccion": "mañana (27/11), lubricadores fuera de horario",
       "ultimo_estado": "Está ok el equipo 👍🏽"
     },
