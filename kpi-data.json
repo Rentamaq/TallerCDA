@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T16:26:51-03:00",
+  "actualizado": "2026-11-27T16:31:51-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -77,7 +77,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-27T16:15:08-03:00",
       "respuestas": 4,
-      "consultas": 12,
+      "consultas": 13,
       "proyeccion": "2 h",
       "ultimo_estado": "FUERA DE SERVICIO!"
     },
