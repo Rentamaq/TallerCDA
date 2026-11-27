@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T16:31:51-03:00",
+  "actualizado": "2026-11-27T16:41:51-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -37,7 +37,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-27T12:38:00-03:00",
       "respuestas": 3,
-      "consultas": 18,
+      "consultas": 19,
       "proyeccion": "viernes, 27 nov, 12:00 p. m.",
       "ultimo_estado": "Caa-04 se instaló neumático. Equipo debe bajar a taller. Y además se debe bajar neumático pinchado."
     },
