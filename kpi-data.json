@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T09:24:46-03:00",
+  "actualizado": "2026-11-27T09:39:47-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -75,11 +75,11 @@
       "estado": "en taller",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-27T07:37:00-03:00",
-      "respuestas": 2,
+      "hora_ultima_respuesta": "2026-11-27T09:36:00-03:00",
+      "respuestas": 3,
       "consultas": 2,
-      "proyeccion": "",
-      "ultimo_estado": "Técnicos irán al lugar a realizar pruebas (samuel debe esperar con las llaves)."
+      "proyeccion": "2 h",
+      "ultimo_estado": "En 2 horas más será atendido equipo. Se están realizando otras prioridades."
     },
     {
       "id": "BOT-20261126-005",
