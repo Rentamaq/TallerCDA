@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T09:39:47-03:00",
+  "actualizado": "2026-11-27T09:46:59-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -100,6 +100,26 @@
       "consultas": 0,
       "proyeccion": "mañana (27/11), lubricadores fuera de horario",
       "ultimo_estado": "Buenas tardes Yohan. Quedará programado para mañana, ya que lubricadores están fuera por horario."
+    },
+    {
+      "id": "BOT-20261127-006",
+      "reportado_por": "Supervisor Concentradora",
+      "hora": "2026-11-27T09:43:19-03:00",
+      "equipo": "Excavadora Komatsu PC-200",
+      "codigo": "EX-11",
+      "hora_reporte": "2026-11-27T09:43:19-03:00",
+      "detalle": "horometro mantenimiento vencido ,caldas gastadas, valde con fisura soldadura, ay que tensar oruga",
+      "patente": "KWKH-79",
+      "area": "Planta 24k",
+      "usuario": "Jonathan González",
+      "estado": "en taller",
+      "hora_operativo": null,
+      "declarado_por": "",
+      "hora_ultima_respuesta": null,
+      "respuestas": 0,
+      "consultas": 0,
+      "proyeccion": "",
+      "ultimo_estado": ""
     }
   ]
 }
