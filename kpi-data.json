@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-28T13:03:39-03:00",
+  "actualizado": "2026-11-28T13:18:38-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -137,7 +137,7 @@
       "declarado_por": "",
       "hora_ultima_respuesta": "2026-11-27T16:16:34-03:00",
       "respuestas": 2,
-      "consultas": 12,
+      "consultas": 13,
       "proyeccion": "sábado, 28 nov, 12:00 p. m.",
       "ultimo_estado": "Proyección de atención 1 dia"
     },
