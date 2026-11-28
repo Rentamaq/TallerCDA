@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-28T13:18:38-03:00",
+  "actualizado": "2026-11-28T13:33:38-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -135,11 +135,11 @@
       "estado": "fuera de servicio",
       "hora_operativo": null,
       "declarado_por": "",
-      "hora_ultima_respuesta": "2026-11-27T16:16:34-03:00",
-      "respuestas": 2,
-      "consultas": 13,
-      "proyeccion": "sábado, 28 nov, 12:00 p. m.",
-      "ultimo_estado": "Proyección de atención 1 dia"
+      "hora_ultima_respuesta": "2026-11-28T13:32:39-03:00",
+      "respuestas": 3,
+      "consultas": 14,
+      "proyeccion": "3 h",
+      "ultimo_estado": "3 horas"
     },
     {
       "id": "BOT-20261127-008",
