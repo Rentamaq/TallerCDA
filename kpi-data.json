@@ -1,5 +1,5 @@
 {
-  "actualizado": "2026-11-27T16:46:51-03:00",
+  "actualizado": "2026-11-28T10:28:38-03:00",
   "reportes": [
     {
       "id": "BOT-20261125-002",
@@ -128,7 +128,7 @@
       "equipo": "Excavadora Komatsu PC450LC",
       "codigo": "EXA-30",
       "hora_reporte": "2026-11-27T10:02:14-03:00",
-      "detalle": "la solicitud: Equipo sigue presentando fuga hidráulica q estaba en observación por favor su asistencia",
+      "detalle": "la solicitud: Equipo sigue presentando fuga hidráulica q estaba en observación por favor su asistencia | si se pueden acercar a reapretar o cambiar pernos sueltos de las zapatas se adjunta video",
       "patente": "TJGG-15",
       "area": "fase 7b",
       "usuario": "Juan adones",
@@ -180,6 +180,26 @@
       "consultas": 0,
       "proyeccion": "",
       "ultimo_estado": "Ya se atendió equipo."
+    },
+    {
+      "id": "BOT-20261128-010",
+      "reportado_por": "Supervisor A. Mina",
+      "hora": "2026-11-28T08:50:33-03:00",
+      "equipo": "Excavadora Caterpillar 350",
+      "codigo": "EX-32",
+      "hora_reporte": "2026-11-28T08:50:33-03:00",
+      "detalle": "se solicita recarga de adblue",
+      "patente": "VFLZ-94",
+      "area": "fase 6",
+      "usuario": "Victor Perez",
+      "estado": "fuera de servicio",
+      "hora_operativo": null,
+      "declarado_por": "",
+      "hora_ultima_respuesta": "2026-11-28T10:27:27-03:00",
+      "respuestas": 1,
+      "consultas": 1,
+      "proyeccion": "4 h",
+      "ultimo_estado": "En 4 horas será atendido"
     }
   ]
 }
